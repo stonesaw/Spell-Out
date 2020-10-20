@@ -6,6 +6,9 @@ class Title < Scene
     Debugger.color = C_RED
     @@font_title = Font.new(300, "Poco")
     @@font = Font.new(160, "Poco")
+    @@bgm = Sound.new("#{$PATH}/assets/sound/38-5.wav") # 62.118 sec
+    @@se_enter_play = Sound.new("#{$PATH}/assets/sound/se_retro03.wav")
+    @@se_cursor = Sound.new("#{$PATH}/assets/sound/se_system27.wav")
     play   = @@font.get_width("PLAY")
     credit = @@font.get_width("CREDIT")
     exit_  = @@font.get_width("EXIT")
@@ -13,19 +16,42 @@ class Title < Scene
     @@section_credit = Sprite.new(850, 650, Image.new(credit+10, 90, C_CYAN))
     @@section_exit   = Sprite.new(800, 750, Image.new(exit_+10,  90, C_CYAN))
     @@cursor = -99
+    @@s_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+    @@blank = 60
   end
 
   class << self
+    def start
+      @@bgm.set_volume(200)
+      @@se_cursor.set_volume(224)
+      @@bgm.play
+      @@bgm.set_volume(226, 1000)
+    end
+
     def update
+      # bgm loop
+      bgm_end = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+      diff = (bgm_end - @@s_time).floor(1)
+      if @@blank <= 0 && diff % 61.5 == 0 # ずれが0.6秒くらい？
+        @@bgm.play
+        @@blank = 60
+      end
+      @@blank = [0, @@blank - 1].max
+      
+      # cursor
+      @@se_cursor.play if Input.key_push?(K_DOWN) || Input.key_push?(K_UP)
       @@cursor += 1 if Input.key_push?(K_DOWN)
       @@cursor -= 1 if Input.key_push?(K_UP)
       @@cursor = [[0, @@cursor].max, 2].min if @@cursor != -99
       @@cursor = -99 if @@section_play.on_mouse? || @@section_credit.on_mouse? || @@section_exit.on_mouse?
 
       if Input.mouse_down?(0) || Input.key_down?(K_RETURN)
-        SceneManager.next(:play, loading: true) if @@section_play.on_mouse? || @@cursor == 0
+        if @@section_play.on_mouse? || @@cursor == 0
+          @@se_enter_play.play
+          SceneManager.next(:play, loading: true)
+        end
         SceneManager.next(:play, loading: true) if @@section_credit.on_mouse? || @@cursor == 1
-        exit if @@section_exit.on_mouse? || @@cursor == 2
+        Window.close if @@section_exit.on_mouse? || @@cursor == 2
       end
     end
 
@@ -70,6 +96,11 @@ class Title < Scene
       # Debugger.add_block do
       #   Window.draw_line(1200, 400, 1060, 900, C_WHITE)
       # end
+
+      def last
+        @@bgm.stop
+        @@bgm.dispose
+      end
     end
   end
 end

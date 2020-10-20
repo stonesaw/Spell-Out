@@ -1,6 +1,6 @@
 class Enemies
   @@list = []
-    
+
   class << self
     def update(now_stage, tick, player)
       i = 1
@@ -15,6 +15,7 @@ class Enemies
           # delete sprite
           Bullet.all.delete(bullets[0])
           if enemy.data.hp <= 0
+            $se_retro04.play
             @@list.delete_at(-i)
             $score += enemy.data.score
           end

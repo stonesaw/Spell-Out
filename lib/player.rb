@@ -10,7 +10,8 @@ class Player < Sprite
     @spell_num = $spell_list.index(@spell)
     @has_spell = $spell_list.map {|key| [key, false]}.to_h
     @has_spell[@spell] = true
-    @life = 1
+    @life = 3
+    # @@se_bullet = Sound.new("#{$PATH}/assets/sound/se_retro03.wav")
     
     @_spell_color = {
       fire: C_RED, water: [55, 183, 230], wind: [135, 224, 83], holy: [249, 250, 212], dark: [121, 73, 173]
@@ -58,12 +59,13 @@ class Player < Sprite
     end
     if Input.key_down?(K_SPACE)
       @bullet_count += 1
-      _fire_bullet if @bullet_count % 15 == 0
+      _fire_bullet if @bullet_count % 20 == 0
     end
   end
 
   private
   def _fire_bullet
+    # @@se_bullet.play
     image = Image.new(10, 10, @_spell_color[@spell])
     Bullet.new(@spell, 10,
                self.x + (self.image.width - image.width) / 2,

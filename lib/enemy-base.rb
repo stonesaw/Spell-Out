@@ -19,6 +19,8 @@ class EnemyData
     stage = stage.to_sym
     @stage_hash[stage] = block
   end
+
+  
 end
 
 
@@ -32,20 +34,27 @@ class Enemy < Sprite
     self.x = x
     self.y = y
     self.image = @data.image
-    @data.remove_instance_variable(:@image)
     @anime = @data.anime
-    @data.remove_instance_variable(:@anime)
+    @_anime_cnt = 0
+    # @data.remove_instance_variable(:@image)
+    # @data.remove_instance_variable(:@anime)
     @spawn_tick = now_tick
     
     Enemies.list << self
     self
   end
 
-  def add_hp_bar()
+  def _anime_next
+    @_anime_cnt = (@_anime_cnt + 1) % @anime.length
+    @image = @anime[@_anime_cnt]
+    self.image = @image
+  end
+
+  def add_hp_bar(x: 1, y: 1)
     UI.enemy_hp_bar << {
       enemy: self, 
-      base: Image.new(self.image.width * 0.9, self.image.height * 0.15, [240, 240, 240]),
-      bar: Image.new(self.image.width * 0.9 - 4, self.image.height * 0.15 - 4, [124, 224, 43])
+      base: Image.new(x * (self.image.width * 0.9),    y * (self.image.height * 0.15), [240, 240, 240]),
+      bar: Image.new(x * (self.image.width * 0.9 - 4), y * (self.image.height * 0.15 - 4), [124, 224, 43])
     }
   end
 

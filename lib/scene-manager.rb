@@ -1,5 +1,8 @@
 class Scene
   class << self
+    def start
+    end
+    
     def update
     end
     
@@ -17,7 +20,7 @@ class SceneManager
   @@do_exit_log = true
   
   # new(scenes_hash{symbol => SceneClass}, start: symbol)
-  def initialize(scenes, start: nil)
+  def initialize(scenes, start: nil, loading: false)
     # check type
     raise ArgumentError.new("Please hash! #Arg:scenes") if scenes.class != Hash
     scenes.each do |ary|
@@ -36,53 +39,75 @@ class SceneManager
     else
       @@now = start
     end
-    @@scenes[@@now].new # now scene init!
+
     Loading.new
+    if loading
+      _do_loading
+    else
+      @@scenes[@@now].new # now scene init!
+    end
+
+    @@_is_start = true
+    @@_non_draw = false
   end
 
   class << self
     def update
+      if @@_is_start
+        @@scenes[@@now].start
+        @@_is_start = false
+      end
+
+      @@_non_draw = false
       @@scenes[@@now].update
     end
     
     def draw
-      @@scenes[@@now].draw
+      @@scenes[@@now].draw unless @@_non_draw
     end
     
     def next(scene_symbol, *args, loading: false)
       raise ArgumentError.new("SceneManager haven't key '#{scene_symbol}' Arg:scene_symbol") unless @@scenes.has_key?(scene_symbol)
       raise ArgumentError.new("'#{scene_symbol}' is now scene") if scene_symbol == @@now
       
+      @@_is_start = true
+      @@_non_draw = true
       @@scenes[@@now].last
       @@now = scene_symbol
       
       if loading
-        thr = Thread.new do
-          @@scenes[@@now].new(*args) # load 
-        end
-        
-        loop do
-          break if Input.key_down?(K_ESCAPE)
-          Window.update
-          Loading.update
-          Loading.draw
-          unless thr.alive?
-            Loading.last
-            break
-          end
-        end
+        _do_loading(*args)
       else
         @@scenes[@@now].new(*args)
       end
     end
 
+    private
+    def _do_loading(*args)
+      thr = Thread.new do
+        @@scenes[@@now].new(*args) # load 
+      end
+      
+      loop do
+        break if Input.key_down?(K_ESCAPE)
+        Window.update
+        Loading.update
+        Loading.draw
+        unless thr.alive?
+          Loading.last
+          break
+        end
+      end
+    end
+
+    public
     def kill
-      exit if @@do_exit_log == false
+      Window.close if @@do_exit_log == false
 
       puts "Exit! (called 'SceneManager.kill')"
       puts ":: log ::"
       puts "last scene: #{@@scenes[@@now]} (:#{@@now})"
-      exit
+      Window.close
     end
 
     # return: symbol
