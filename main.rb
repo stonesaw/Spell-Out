@@ -40,6 +40,6 @@ Window.loop do
   SceneManager.update
   SceneManager.draw
   BGM.update
-  Debugger.block_call
-  Debugger.draw_msg
+  # Debugger.block_call
+  # Debugger.draw_msg
 end

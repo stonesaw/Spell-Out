@@ -21,10 +21,10 @@ class Bullet < Sprite
   class << self
     def _load
       @@list = []
-      @@fire_img = []
-      61.times do |i|
-        @@fire_img << Image.load(["#{$PATH}/assets/image/Fx_pack/1/1_", i, ".png"].join)
-      end
+      # @@fire_img = []
+      # 61.times do |i|
+      #   @@fire_img << Image.load(["#{$PATH}/assets/image/Fx_pack/1/1_", i, ".png"].join)
+      # end
     end
 
     def update
@@ -59,6 +59,10 @@ class Bullet < Sprite
 
     def fire_img
       @@fire_img
+    end
+
+    def reset
+      @@list = []
     end
   end
 end

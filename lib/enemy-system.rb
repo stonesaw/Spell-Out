@@ -19,9 +19,9 @@ class EnemySystem
 
     def calc_hp(enemy, bullet)
       if spell_matching?(bullet, enemy)
-        boost = 2.0
+        boost = 1.5
       elsif spell_missing?(bullet, enemy)
-        boost = 0.5
+        boost = 0.3
       else
         boost = 1.0
       end

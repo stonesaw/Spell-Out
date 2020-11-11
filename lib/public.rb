@@ -9,6 +9,7 @@ Font.install("#{$PATH}/assets/font/Poco.ttf")
 
 $spell_list = [:fire, :water, :wind, :holy, :dark].freeze
 $se_retro04 = Sound.new("#{$PATH}/assets/sound/se_retro04.wav").set_volume(220)
+$se_slime =   Sound.new("#{$PATH}/assets/sound/slime1.wav")
 
 class Mouse
   class << self

@@ -22,17 +22,14 @@ class Player < Sprite
     }
     @bullet_count = 0
     @anime_count = 0
+    @hit_tick = 0
+    @is_hit = false
   end
 
   def update(tick)
-    # player controll
-    self.x += 5 if Input.key_down?(K_D)
-    self.x -= 5 if Input.key_down?(K_A)
-    self.y += 2 if Input.key_down?(K_S)
-    self.y -= 5 if Input.key_down?(K_W)
+    anime_stop = false
 
-    # マウス移動
-    
+    # player controll
     mx = Mouse.x
     my = Mouse.y
     ox = self.x + (self.image.width / 2)
@@ -45,45 +42,38 @@ class Player < Sprite
       @_angle = angle
       self.x += @speed * Math.cos(@_angle * Math::PI / 180.0)
       self.y += @speed * Math.sin(@_angle * Math::PI / 180.0)
+    else
+      anime_stop = true
     end
-
-    # _ang = @_angle > 180 ? 360 - @_angle : @_angle
-    # if (@_angle - angle).abs < 3
-    #   @_angle = angle
-    # else
-    #   if angle + _ang < 180
-    #     @_angle += 3
-    #   else
-    #     @_angle -= 3
-    #   end
-      # if angle < 180 && (0..angle).include?(@_angle) || ((angle + 180) % 360..360).include?(@_angle)
-      #   @_angle -= 5
-      # else
-      #   @_angle += 5
-      # end
-    # end
 
     self.x = [[0, self.x].max, Window.width - self.image.width].min
     self.y = [[0, self.y].max, Window.height - self.image.height].min
 
     # [右 → から時計回り][アニメーション]
     @anime_count += 1 if tick % 10 == 0
-    self.image = @images[((@_angle + 23) % 360) / 45][@anime_count % 3]
+    if anime_stop
+      a = 1
+    else
+      a = @anime_count % 3 
+    end
+    self.image = @images[((@_angle + 23) % 360) / 45][a]
+
 
     # hit enemy
     enemies = self.check(Enemies.list)
-    unless enemies.empty?
+    unless enemies.empty? || @is_hit
       @life -= 1
+      @hit_tick = tick
+      @is_hit = true
       Enemies.list.delete(enemies[0])
     end
 
-
-    # obj = Enemies.list + Bullet.list
-    # obj.each { |o| o.x -= 3 } if Input.key_down?(K_D)
-    # obj.each { |o| o.x += 3 } if Input.key_down?(K_A)
-    # obj.each { |o| o.y -= 1 } if Input.key_down?(K_S)
-    # obj.each { |o| o.y += 3 } if Input.key_down?(K_W)
-
+    if @hit_tick != 0 && tick - @hit_tick < 180
+      self.alpha += 30
+    else
+      self.alpha = 255
+      @is_hit = false
+    end
 
     # spell change
     @spell_num -= 1 if Input.key_push?(K_Z)
@@ -96,7 +86,7 @@ class Player < Sprite
     end
     if Input.key_down?(K_SPACE)
       @bullet_count += 1
-      _fire_bullet if @bullet_count % 10 == 0
+      _fire_bullet if @bullet_count % 14 == 0
     end
   end
 
