@@ -7,6 +7,7 @@ class EnemiesDataList
     slime_img = Image.load_tiles("#{$PATH}/assets/image/slime.png", 3, 1)
     @slime = EnemyData.new("スライム", :water, 100, 10, slime_img[0], anime: slime_img)
     @slime.stage_is(:any) do |me, tick, player|
+      me.collision = [64, 100, 27]
       me.y += 2
       if (me.spawn_tick - tick) % 10 == 0
         me._anime_next

@@ -8,7 +8,7 @@ Window.bgcolor = [26, 26, 26]
 Font.install("#{$PATH}/assets/font/Poco.ttf")
 
 $spell_list = [:fire, :water, :wind, :holy, :dark].freeze
-$se_retro04 = Sound.new("#{$PATH}/assets/sound/se_retro04.wav").set_volume(222)
+$se_retro04 = Sound.new("#{$PATH}/assets/sound/se_retro04.wav").set_volume(220)
 
 class Mouse
   class << self
