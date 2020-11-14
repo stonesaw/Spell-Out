@@ -17,9 +17,6 @@ class Player < Sprite
     @_angle = 0 # キャラクターの画像用
     # @@se_bullet = Sound.new("#{$PATH}/assets/sound/se_retro03.wav")
     
-    @_spell_color = {
-      fire: C_RED, water: [55, 183, 230], wind: [135, 224, 83], holy: [249, 250, 212], dark: [121, 73, 173]
-    }
     @bullet_count = 0
     @anime_count = 0
     @hit_tick = 0
@@ -97,7 +94,7 @@ class Player < Sprite
     # @@se_bullet.play
     _x = self.x + (self.image.width * 0.5)  + self.image.width  * 0.4 * Math.cos(@_angle * Math::PI / 180.0)
     _y = self.y + (self.image.height * 0.6) + self.image.height * 0.4 * Math.sin(@_angle * Math::PI / 180.0)
-    image = Image.new(10, 10, @_spell_color[@spell])
+    image = Image.new(10, 10, $spell_color[@spell])
     Bullet.new(@spell, 20, @_angle, _x, _y, image)
 
     # x = self.x + (self.image.width - image.width) / 2

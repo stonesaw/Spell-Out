@@ -3,23 +3,16 @@
 class Play < Scene
   def initialize
     Debugger.color = [240, 240, 240]
-    Window.bgcolor = [26, 26, 26]
+    Window.bgcolor = [142, 199, 95]
     @@font = Font.new(80, "Poco")
     @@font_mini = Font.new(50, "Poco")
     @@spell_icon = Sprite.new(1000, 600, Image.new(64, 64, C_WHITE))
-    images = Image.load_tiles("#{$PATH}/assets/image/wizard.png", 6, 4)
-    @@player_images = []
-    load_setting = [4, 3, 0, 1, 2, 7, 6, 5]
-    8.times do |i|
-      s = load_setting[i] * 3
-      @@player_images[i] = [images[s], images[s + 1], images[s + 2]] 
-    end
     @@e_list = EnemiesDataList.new
     @@heart_icon = Image.load("#{$PATH}/assets/image/icon_Heart.png")
     # @@bg = Sprite.new(0, 0, Image.load("#{$PATH}/assets/image/field_bg.png"))
 
-    @@player = Player.new(:fire, (Window.width - @@player_images[0][0].width) * 0.5, Window.height * 0.7, @@player_images)
-    r = @@player_images[0][0].width / 2
+    @@player = Player.new(:fire, (Window.width - $player_images[0][0].width) * 0.5, Window.height * 0.7, $player_images)
+    r = $player_images[0][0].width / 2
     Input.set_mouse_pos(@@player.x * Window.scale + r, @@player.y * Window.scale + r)
     Bullet.reset
     Enemies.reset
@@ -42,6 +35,7 @@ class Play < Scene
       # test
       # SceneManager.next(:title) if Input.key_push?(K_BACK)
       Input.mouse_enable = true
+      $debug_mode = !$debug_mode if Input.key_release?(K_F5)
 
       SceneManager.next(:menu) if Input.key_release?(K_TAB)
 
@@ -68,7 +62,21 @@ class Play < Scene
 
       # update
       @@player.update(@@tick)
-      SceneManager.next(:game_over) if @@player.life <= 0
+      if @@player.life <= 0
+        cover= Sprite.new(0, 0, Image.new(Window.width, Window.height, C_BLACK))
+        cover.alpha = 0
+        @@player.alpha = 255
+        i = 0
+        loop do
+          Window.update
+          cover.alpha += 15 if i % 60 == 0
+          break if cover.alpha > 255
+          Play.draw
+          cover.draw
+          i += 1
+        end
+        SceneManager.next(:game_over)
+      end
       Bullet.update
       Enemies.update(:any, @@tick, @@player)
       @@tick += 1
@@ -80,7 +88,7 @@ class Play < Scene
       Debugger.puts ["my life : ", @@player.life].join
       Debugger.puts ["angle : ", @@player._angle.to_i].join
       Debugger.puts ["bullet len : ", Bullet.all.length].join
-      # Debugger.puts ["enemy  len : ", Enemies.list.length].join
+      Debugger.puts ["enemy  len : ", Enemies.list.length].join
       
       # @@bg.draw
       @@player.draw
@@ -94,6 +102,10 @@ class Play < Scene
       w = @@font.get_width(["SCORE : ", $score].join)
       Window.draw_font(Window.width - w - 40, -10, ["SCORE : ", $score].join, @@font)
       Window.draw_font(Window.width - 200, Window.height - 60, ["<FPS : ", Window.real_fps, ">"].join, @@font_mini, color: [230, 230, 230])
+    end
+
+    def last
+      $debug_mode = false
     end
   end
 end

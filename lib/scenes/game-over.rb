@@ -2,6 +2,7 @@
 
 class GameOver < Scene
   def initialize
+    Window.bgcolor = [0, 0, 0]
     @@font_big = Font.new(140, "Poco")
     @@font_nomal = Font.new(90, "Poco")
     @@font_mini = Font.new(50, "Poco")

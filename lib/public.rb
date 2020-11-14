@@ -7,9 +7,24 @@ Window.bgcolor = [26, 26, 26]
 
 Font.install("#{$PATH}/assets/font/Poco.ttf")
 
+$debug_mode = false
+
 $spell_list = [:fire, :water, :wind, :holy, :dark].freeze
 $se_retro04 = Sound.new("#{$PATH}/assets/sound/se_retro04.wav").set_volume(220)
 $se_slime =   Sound.new("#{$PATH}/assets/sound/slime1.wav")
+
+images = Image.load_tiles("#{$PATH}/assets/image/wizard.png", 6, 4)
+$player_images = []
+load_setting = [4, 3, 0, 1, 2, 7, 6, 5]
+8.times do |i|
+  s = load_setting[i] * 3
+  $player_images[i] = [images[s], images[s + 1], images[s + 2]]
+end
+
+$spell_color = {
+  fire: [255, 0, 0], water: [55, 183, 230], wind: [23, 255, 123], holy: [249, 250, 212], dark: [121, 73, 173]
+}
+
 
 class Mouse
   class << self

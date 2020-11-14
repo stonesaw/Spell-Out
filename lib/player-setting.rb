@@ -1,3 +1,3 @@
 module PlayerSetting
-  AUTO_BULLET = true
+  AUTO_BULLET = false
 end

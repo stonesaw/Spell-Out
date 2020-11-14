@@ -43,6 +43,8 @@ Window.loop do
   SceneManager.update
   SceneManager.draw
   BGM.update
-  # Debugger.block_call
-  # Debugger.draw_msg
+  if $debug_mode
+    Debugger.block_call
+    Debugger.draw_msg
+  end
 end
