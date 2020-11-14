@@ -76,15 +76,17 @@ class Player < Sprite
     end
 
     # spell change
+    @spell_num -= Input.mouse_wheel_pos / 120
+    Input.mouse_wheel_pos = 0
     @spell_num -= 1 if Input.key_push?(K_Z)
     @spell_num += 1 if Input.key_push?(K_X)
     @spell = $spell_list[@spell_num % $spell_list.length]
     
-    if Input.key_push?(K_SPACE)
+    if Input.key_push?(K_SPACE) || Input.mouse_push?(0)
       @bullet_count = 0
       _fire_bullet
     end
-    if Input.key_down?(K_SPACE)
+    if PlayerSetting::AUTO_BULLET || Input.key_down?(K_SPACE) || Input.mouse_down?(0)
       @bullet_count += 1
       _fire_bullet if @bullet_count % 14 == 0
     end

@@ -17,29 +17,35 @@ class Play < Scene
     @@e_list = EnemiesDataList.new
     @@heart_icon = Image.load("#{$PATH}/assets/image/icon_Heart.png")
     # @@bg = Sprite.new(0, 0, Image.load("#{$PATH}/assets/image/field_bg.png"))
+
+    @@player = Player.new(:fire, (Window.width - @@player_images[0][0].width) * 0.5, Window.height * 0.7, @@player_images)
+    r = @@player_images[0][0].width / 2
+    Input.set_mouse_pos(@@player.x * Window.scale + r, @@player.y * Window.scale + r)
+    Bullet.reset
+    Enemies.reset
+    @@tick = 0
+    @@boss_spawn_ticks = 180
+    @@is_boss = false
+    $score = 0
+    @@enemy_count = 0
+    @@slime_count = 0
+    @@slime = @@e_list.slime
   end
 
   class << self
-    def start
-      @@player = Player.new(:fire, (Window.width - @@player_images[0][0].width) * 0.5, Window.height * 0.7, @@player_images)
-      Bullet.reset
-      Enemies.reset
-      @@tick = 0
-      @@boss_spawn_ticks = 180
-      @@is_boss = false
-      $score = 0
+    def set_music
       BGM.set_s_time
-      BGM.public[:chill][0].set_volume(250)
-      @@enemy_count = 0
-      @@slime_count = 0
-      @@slime = @@e_list.slime
+      BGM.public[:chill][0].set_volume(250)  
     end
 
     def update
       # test
-      SceneManager.next(:title) if Input.key_push?(K_BACK)
+      # SceneManager.next(:title) if Input.key_push?(K_BACK)
       Input.mouse_enable = true
 
+      SceneManager.next(:menu) if Input.key_release?(K_TAB)
+
+      # spown enemy
       if @@tick % 200 == 0 && !@is_boss
         if @@enemy_count <= 0
           @@enemy_count = rand(2..6)
@@ -60,6 +66,7 @@ class Play < Scene
       #   Enemy.new(@@e_list.big_slime, @@tick, x, 0).add_boss_bar
       # end
 
+      # update
       @@player.update(@@tick)
       SceneManager.next(:game_over) if @@player.life <= 0
       Bullet.update

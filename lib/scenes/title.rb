@@ -21,7 +21,7 @@ class Title < Scene
   end
 
   class << self
-    def start
+    def set_music
       @@bgm.set_volume(200)
       @@se_cursor.set_volume(224)
       @@bgm.play

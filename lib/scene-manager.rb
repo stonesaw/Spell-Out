@@ -1,6 +1,6 @@
 class Scene
   class << self
-    def start
+    def set_music
     end
     
     def update
@@ -47,38 +47,38 @@ class SceneManager
       @@scenes[@@now].new # now scene init!
     end
 
-    @@_is_start = true
-    @@_non_draw = false
+    @@_set_music = true
+    @@_called_next = false
   end
 
   class << self
     def update
-      if @@_is_start
-        @@scenes[@@now].start
-        @@_is_start = false
+      if @@_set_music
+        @@scenes[@@now].set_music
+        @@_set_music = false
       end
 
-      @@_non_draw = false
+      @@_called_next = false
       @@scenes[@@now].update
     end
     
     def draw
-      @@scenes[@@now].draw unless @@_non_draw
+      @@scenes[@@now].draw unless @@_called_next
     end
     
-    def next(scene_symbol, *args, loading: false)
+    def next(scene_symbol, *args, loading: false, is_init: true)
       raise ArgumentError.new("SceneManager haven't key '#{scene_symbol}' Arg:scene_symbol") unless @@scenes.has_key?(scene_symbol)
       raise ArgumentError.new("'#{scene_symbol}' is now scene") if scene_symbol == @@now
       
-      @@_is_start = true
-      @@_non_draw = true
+      @@_set_music = is_init
+      @@_called_next = true
       @@scenes[@@now].last
       @@now = scene_symbol
       
       if loading
         _do_loading(*args)
       else
-        @@scenes[@@now].new(*args)
+        @@scenes[@@now].new(*args) if is_init
       end
     end
 
