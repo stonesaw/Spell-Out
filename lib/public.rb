@@ -6,6 +6,7 @@ Window.caption = "Spell Out"
 Window.bgcolor = [26, 26, 26]
 
 Font.install("#{$PATH}/assets/font/Poco.ttf")
+Font.install("#{$PATH}/assets/font/misaki_gothic.ttf")
 
 $debug_mode = false
 

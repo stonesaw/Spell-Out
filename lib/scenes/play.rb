@@ -87,13 +87,13 @@ class Play < Scene
       Debugger.puts ["score : ", $score].join
       Debugger.puts ["my life : ", @@player.life].join
       Debugger.puts ["angle : ", @@player._angle.to_i].join
-      Debugger.puts ["bullet len : ", Bullet.all.length].join
-      Debugger.puts ["enemy  len : ", Enemies.list.length].join
+      Debugger.puts ["bullet : ", Bullet.all.length].join
+      Debugger.puts ["enemy : ", Enemies.list.length].join
       
       # @@bg.draw
-      @@player.draw
       Bullet.draw
       Enemies.draw
+      @@player.draw
       UI.draw
 
       @@player.life.times do |i|

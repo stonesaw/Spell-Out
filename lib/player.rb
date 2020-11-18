@@ -83,7 +83,7 @@ class Player < Sprite
       @bullet_count = 0
       _fire_bullet
     end
-    if PlayerSetting::AUTO_BULLET || Input.key_down?(K_SPACE) || Input.mouse_down?(0)
+    if $p_set.auto_attack || Input.key_down?(K_SPACE) || Input.mouse_down?(0)
       @bullet_count += 1
       _fire_bullet if @bullet_count % 14 == 0
     end
