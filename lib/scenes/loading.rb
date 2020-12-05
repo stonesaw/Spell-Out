@@ -1,15 +1,12 @@
 # Scene - Loading
 # specially scene
 # imported 'scene-manager.rb'
-
 class Loading < Scene
-  def initialize
-    @@font = Font.new(32)
-  end
+  @font = Font.new(32)
 
   class << self
     def draw
-      Window.draw_font(0, 0, "Loading", @@font)
+      Window.draw_font(0, 0, "Loading", @font)
     end
   end
 end

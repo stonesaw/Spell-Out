@@ -1,9 +1,7 @@
-# Scene - Titlee
-# draw the scene & jump any scene
+# Scene - Title
 
 class Title < Scene
   def initialize
-    Debugger.color = C_RED
     @@font_title = Font.new(300, "Poco")
     @@font = Font.new(160, "Poco")
     @@bgm = Sound.new("#{$PATH}/assets/sound/38-5.wav") # 62.118 sec
@@ -37,6 +35,7 @@ class Title < Scene
       @@bgm.set_volume(226, 1000)
     end
 
+
     def update
       @@tick += 1
       # bgm loop
@@ -47,7 +46,7 @@ class Title < Scene
         @@blank = 60
       end
       @@blank = [0, @@blank - 1].max
-      
+
       # cursor
       @@se_cursor.play if Input.key_push?(K_DOWN) || Input.key_push?(K_UP)
       @@cursor += 1 if Input.key_push?(K_DOWN)
@@ -60,12 +59,12 @@ class Title < Scene
           @@se_enter_play.play
           SceneManager.next(:play, loading: true)
           return
-        end
-        if @@section_credit.on_mouse? || @@cursor == 1
+        elsif @@section_credit.on_mouse? || @@cursor == 1
           SceneManager.next(:play, loading: true) 
           return
+        elsif @@section_exit.on_mouse? || @@cursor == 2
+          Window.close
         end
-        Window.close if @@section_exit.on_mouse? || @@cursor == 2
       end
 
       # mini charactor
@@ -93,16 +92,19 @@ class Title < Scene
     def draw
       c = @@hit_spell ? $spell_color[@@hit_spell] : C_WHITE
       Window.draw_font(30, -100, "Spell", @@font_title, color: c)
-      Window.draw_font(30, 100, "Out", @@font_title, color: c)
+      Window.draw_font(30,  100, "Out",   @@font_title, color: c)
 
       # @@section_play.draw
       # @@section_credit.draw
       # @@section_exit.draw
 
-      _draw_section
+      _draw_section(@@section_play,   0, "PLAY")
+      _draw_section(@@section_credit, 1, "CREDIT")
+      _draw_section(@@section_exit,   2, "EXIT")
 
       @@mini_char.draw
       _draw_mini_char_field
+      Bullet.draw
     end
 
     def last
@@ -110,41 +112,21 @@ class Title < Scene
       @@bgm.dispose
     end
 
-    def _draw_section
-      # play
-      if @@section_play.on_mouse? || @@cursor == 0
-        Window.draw_font(@@section_play.x + 10, @@section_play.y - 60, "PLAY", @@font)
-        Window.draw_line(@@section_play.x,               @@section_play.y + @@section_play.image.height,
-          @@section_play.x + @@section_play.image.width, @@section_play.y + @@section_play.image.height, C_WHITE
+    private
+    def _draw_section(sp, cursor, section_name)
+      args = sp.x + 10, sp.y - 60, section_name.upcase, @@font
+      if sp.on_mouse? || @@cursor == cursor
+        Window.draw_font(*args)
+        Window.draw_line(sp.x,                      sp.y + sp.image.height,
+                         sp.x + sp.image.width, sp.y + sp.image.height, C_WHITE
         )
       else
-        Window.draw_font(@@section_play.x + 10, @@section_play.y - 60, "PLAY", @@font, color: [200, 255, 255, 255])
-      end
-
-      # credit
-      if @@section_credit.on_mouse? || @@cursor == 1
-        Window.draw_font(@@section_credit.x + 10, @@section_credit.y - 60, "CREDIT", @@font)
-        Window.draw_line(@@section_credit.x,               @@section_credit.y + @@section_credit.image.height,
-          @@section_credit.x + @@section_credit.image.width, @@section_credit.y + @@section_credit.image.height, C_WHITE
-        )
-      else
-        Window.draw_font(@@section_credit.x + 10, @@section_credit.y - 60, "CREDIT", @@font, color: [200, 255, 255, 255])
-      end
-
-      # exit
-      if @@section_exit.on_mouse? || @@cursor == 2
-        Window.draw_font(@@section_exit.x + 10, @@section_exit.y - 60, "EXIT", @@font)
-        Window.draw_line(@@section_exit.x,               @@section_exit.y + @@section_exit.image.height,
-          @@section_exit.x + @@section_exit.image.width, @@section_exit.y + @@section_exit.image.height, C_WHITE
-        )
-      else
-        Window.draw_font(@@section_exit.x + 10, @@section_exit.y - 60, "EXIT", @@font, color: [200, 255, 255, 255])
+        Window.draw_font(*args, color: [200, 255, 255, 255])
       end
     end
 
     def _draw_mini_char_field
       @@mini_field_top.draw
-      Bullet.draw
 
       base_y = @@mini_char.y + @@mini_char.image.height + 20
       17.times do |i|

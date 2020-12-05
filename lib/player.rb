@@ -10,7 +10,7 @@ class Player < Sprite
     self.collision = [8, 36, 70, 112]
     @spell = spell.to_sym
     @spell_num = $spell_list.index(@spell)
-    @has_spell = $spell_list.map {|key| [key, false]}.to_h
+    @has_spell = $spell_list.map { |key| [key, false] }.to_h
     @has_spell[@spell] = true
     @life = 3
     @speed = 4
@@ -49,11 +49,11 @@ class Player < Sprite
     # [右 → から時計回り][アニメーション]
     @anime_count += 1 if tick % 10 == 0
     if anime_stop
-      a = 1
+      frame = 1
     else
-      a = @anime_count % 3 
+      frame = @anime_count % 3 
     end
-    self.image = @images[((@_angle + 23) % 360) / 45][a]
+    self.image = @images[((@_angle + 23) % 360) / 45][frame]
 
 
     # hit enemy

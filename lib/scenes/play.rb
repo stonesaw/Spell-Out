@@ -4,19 +4,19 @@ class Play < Scene
   def initialize
     Debugger.color = [240, 240, 240]
     Window.bgcolor = [142, 199, 95]
-    @@font = Font.new(80, "Poco")
+    @@font      = Font.new(80, "Poco")
     @@font_mini = Font.new(50, "Poco")
     @@spell_icon = Sprite.new(1000, 600, Image.new(64, 64, C_WHITE))
     @@e_list = EnemiesDataList.new
     @@heart_icon = Image.load("#{$PATH}/assets/image/icon_Heart.png")
-    # @@bg = Sprite.new(0, 0, Image.load("#{$PATH}/assets/image/field_bg.png"))
-
+    
     @@player = Player.new(:fire, (Window.width - $player_images[0][0].width) * 0.5, Window.height * 0.7, $player_images)
     r = $player_images[0][0].width / 2
     Input.set_mouse_pos(@@player.x * Window.scale + r, @@player.y * Window.scale + r)
     Bullet.reset
     Enemies.reset
     @@tick = 0
+    p "call"
     @@boss_spawn_ticks = 180
     @@is_boss = false
     $score = 0
@@ -40,7 +40,7 @@ class Play < Scene
       SceneManager.next(:menu) if Input.key_release?(K_TAB)
 
       # spown enemy
-      if @@tick % 200 == 0 && !@is_boss
+      if @@tick % 200 == 0 && !@@is_boss
         if @@enemy_count <= 0
           @@enemy_count = rand(2..6)
           @@slime_count += 1

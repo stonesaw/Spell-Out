@@ -29,22 +29,23 @@ class Bullet < Sprite
 
     def update
       i = 1
-      _del = []
+      del = []
       @@list.length.times do
-        @@list[-i].x += @@list[-i].speed * Math.cos((@@list[-i]._angle) * Math::PI / 180.0)
-        @@list[-i].y += @@list[-i].speed * Math.sin((@@list[-i]._angle) * Math::PI / 180.0)
+        @@list[-i].x += @@list[-i].speed * Math.cos(@@list[-i]._angle * Math::PI / 180.0)
+        @@list[-i].y += @@list[-i].speed * Math.sin(@@list[-i]._angle * Math::PI / 180.0)
         # @@list[-i].y -= 8
         if @@list[-i].is_anime
           @@list[-i].anime_cnt = (@@list[-i].anime_cnt + 1) % @@list[-i].anime.length
           @@list[-i].image = @@list[-i].anime[@@list[-i].anime_cnt]
         end
 
-        unless (0..Window.width).include?(@@list[-i].x) && (0..Window.height).include?(@@list[-i].y)
-          _del << i
+        unless (0..Window.width).include?(@@list[-i].x) && 
+               (0..Window.height).include?(@@list[-i].y)
+          del << i
         end
         i += 1
       end
-      _del.each do |i|
+      del.each do |i|
         @@list.delete_at(-i)
       end
     end
@@ -52,6 +53,7 @@ class Bullet < Sprite
     def draw
       Sprite.draw(@@list)
     end
+
 
     def all
       @@list

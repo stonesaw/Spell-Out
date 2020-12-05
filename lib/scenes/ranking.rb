@@ -1,9 +1,9 @@
 class Ranking < Scene
   def initialize(user_name, score)
     @@font_title = Font.new(140, "Poco")
-    @@font_big = Font.new(120, "Poco")
+    @@font_big   = Font.new(120, "Poco")
     @@font_nomal = Font.new(100, "Poco")
-    @@font_mini = Font.new(48, "Poco")
+    @@font_mini  = Font.new(48, "Poco")
 
     begin
       @@user_db = open("user") { |io| JSON.load(io) }
@@ -18,7 +18,7 @@ class Ranking < Scene
       "time" => [t.year, "/", t.month, "/", t.day, " ", t.hour, ":", min].join
     })
 
-    @@user_db = @@user_db.sort_by { |data| [-data[1]["score"], data[0].upcase]}
+    @@user_db = @@user_db.sort_by { |data| [-data[1]["score"], data[0].upcase] }
     @@user_db.pop(@@user_db.length - 10) if @@user_db.length > 10
     @@user_db = @@user_db.to_h
 

@@ -1,0 +1,17 @@
+AllCops:
+  TargetRubyVersion: 2.6
+
+# 日本語のコメントを許可
+Style/AsciiComments:
+  Enabled: false
+# ドキュメントの無いパブリッククラスを許可する
+Style/Documentation:
+  Enabled: false
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Metrics/MethodLength:
+  Max: 20
+
+GlobalVars:
+  AllowedVariables: [$PATH]
