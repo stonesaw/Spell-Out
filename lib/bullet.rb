@@ -14,7 +14,7 @@ class Bullet < Sprite
     @anime_cnt = 0
     @is_anime = !anime.empty?
 
-    @speed = 10
+    @speed = 12
     @@list << self
   end
 
@@ -39,7 +39,7 @@ class Bullet < Sprite
           @@list[-i].image = @@list[-i].anime[@@list[-i].anime_cnt]
         end
 
-        unless (0..Window.width).include?(@@list[-i].x) && 
+        unless (0..Window.width).include?(@@list[-i].x) &&
                (0..Window.height).include?(@@list[-i].y)
           del << i
         end
@@ -54,8 +54,17 @@ class Bullet < Sprite
       Sprite.draw(@@list)
     end
 
+    def _spell_color
+      {
+        fire: [255, 0, 0],
+        water: [55, 183, 230],
+        wind: [23, 255, 123],
+        holy: [249, 250, 212],
+        dark: [121, 73, 173]
+      }
+    end
 
-    def all
+    def list
       @@list
     end
 

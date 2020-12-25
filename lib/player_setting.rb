@@ -1,9 +1,9 @@
 class PlayerSetting
-  attr_accessor :auto_attack
+  @auto_attack = false
 
-  def initialize
-    @auto_attack = false
+  class << self
+    attr_accessor :auto_attack
   end
 end
 
-$p_set = PlayerSetting.new
+PlayerSetting.new

@@ -1,4 +1,4 @@
-# Wrapping `Input.mouse_x`, `Input.mouse_y` and `Input.mouse_enable`  
+# Wrapping `Input.mouse_x`, `Input.mouse_y` and `Input.mouse_enable`
 # And Update the mouse display when the keyboard is pressed
 class Mouse
   class << self
@@ -30,13 +30,12 @@ class Mouse
   end
 end
 
-
 # wrapping `DXRuby::Sprite
 # Adding `on_mosue?()`
 class Sprite
   def on_mouse?
     Mouse.is_draw == true &&
-    (self.x..self.x + self.image.width).include?(Mouse.x) &&
-    (self.y..self.y + self.image.height).include?(Mouse.y)
+      (x..x + image.width).include?(Mouse.x) &&
+      (y..y + image.height).include?(Mouse.y)
   end
 end

@@ -21,7 +21,7 @@ class Debugger
     end
 
     def puts(str)
-      @@_str += ["#{str.chomp}", "\n"].join
+      @@_str += [str.chomp.to_s, "\n"].join
       self
     end
 
@@ -46,7 +46,7 @@ class Debugger
     end
 
     def block_call
-      @@_list.each { |l| l.call }
+      @@_list.each {|l| l.call }
       @@_list = []
     end
 

@@ -1,17 +1,50 @@
 AllCops:
   TargetRubyVersion: 2.6
 
+
 # 日本語のコメントを許可
 Style/AsciiComments:
   Enabled: false
 # ドキュメントの無いパブリッククラスを許可する
 Style/Documentation:
   Enabled: false
+
 Style/FrozenStringLiteralComment:
   Enabled: false
+
+# %w() と %i() が見分けづらいので Style/WordArray と合わせて無効に。
+# 書き手に委ねるという意味で、Enabled: false にしています。使っても良い。
+Style/SymbolArray:
+  Enabled: false
+# %w() と %i() が見分けづらいので Style/SymbolArray と合わせて無効に。
+# 書き手に委ねるという意味で、Enabled: false にしています。使っても良い。
+Style/WordArray:
+  Enabled: false
+# foo.positive? は foo > 0 に比べて意味が曖昧になる
+# foo.zero? は許可したいけどメソッドごとに指定できないので一括で disable に
+Style/NumericPredicate:
+  Enabled: false
+
+Layout/FirstHashElementIndentation:
+  Enabled: false
+# メソッドチェーン感がより感じられるインデントにする
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented_relative_to_receiver
+
+Layout/SpaceInsideBlockBraces:
+  SpaceBeforeBlockParameters: false
+
+
+Lint/UnderscorePrefixedVariableName:
+  Enabled: false
+
 
 Metrics/MethodLength:
   Max: 20
 
 GlobalVars:
-  AllowedVariables: [$PATH]
+  AllowedVariables: [
+    $PATH,
+    $debug_mode,
+    $player_images
+  ]

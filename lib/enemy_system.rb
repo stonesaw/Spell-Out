@@ -7,7 +7,7 @@ class EnemySystem
     [:holy, :dark],
     [:dark, :holy]
   ]
-  @@_spell_miss = @@_spell_match.map.with_index { |spells, i| spells.reverse if i < 3 }
+  @@_spell_miss = @@_spell_match.map.with_index {|spells, i| spells.reverse if i < 3 }
   @@_spell_miss.compact!
 
   class << self
@@ -18,13 +18,13 @@ class EnemySystem
     end
 
     def calc_hp(enemy, bullet)
-      if spell_matching?(bullet, enemy)
-        boost = 1.5
-      elsif spell_missing?(bullet, enemy)
-        boost = 0.3
-      else
-        boost = 1.0
-      end
+      boost = if spell_matching?(bullet, enemy)
+                1.5
+              elsif spell_missing?(bullet, enemy)
+                0.3
+              else
+                1.0
+              end
 
       enemy.data.hp -= bullet.attack * boost
       enemy.data.hp = [0, enemy.data.hp].max
@@ -34,14 +34,14 @@ class EnemySystem
       @@_spell_match.each do |to, from|
         return true if bullet.spell == to && enemy.data.spell == from
       end
-      return false
+      false
     end
 
     def spell_missing?(bullet, enemy)
       @@_spell_miss.each do |to, from|
         return true if bullet.spell == to && enemy.data.spell == from
       end
-      return false
+      false
     end
   end
 end

@@ -6,7 +6,7 @@ class Loading < Scene
 
   class << self
     def draw
-      Window.draw_font(0, 0, "Loading", @font)
+      Window.draw_font(0, 0, 'Loading', @font)
     end
   end
 end

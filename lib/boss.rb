@@ -1,5 +1,5 @@
 class Boss < Enemies
-  def initialize()
+  def initialize
     @@is_alive = true
     super
   end
@@ -7,8 +7,8 @@ class Boss < Enemies
   class << self
     def update
       super
-      @@is_alive = !self.list.empty?
-      p "call"
+      @@is_alive = !list.empty?
+      p 'call'
     end
 
     def draw

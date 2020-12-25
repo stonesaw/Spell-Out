@@ -1,7 +1,7 @@
 class EnemyData
   attr_accessor :name, :spell, :hp, :max_hp, :score, :var
   attr_reader :stage_hash, :image, :anime
-  
+
   def initialize(name, spell, hp, score, image, anime: [])
     @name = name.to_sym
     @spell = spell.to_sym
@@ -11,21 +11,20 @@ class EnemyData
     @image = image
     @anime = anime
     @var = {}
-    @stage_hash = { any: Proc.new{} }
+    @stage_hash = { any: proc {} }
   end
-  
+
   # plz block
   def stage_is(stage = :amy, &block)
     stage = stage.to_sym
     @stage_hash[stage] = block
-  end 
+  end
 end
-
 
 class Enemy < Sprite
   attr_reader :data, :spawn_tick
   attr_accessor :hp_bar, :hp_bar_base
-    
+
   def initialize(data, now_tick, x, y)
     @data = data.dup
     super
@@ -37,7 +36,7 @@ class Enemy < Sprite
     # @data.remove_instance_variable(:@image)
     # @data.remove_instance_variable(:@anime)
     @spawn_tick = now_tick
-    
+
     Enemies.list << self
     self
   end
@@ -50,18 +49,17 @@ class Enemy < Sprite
 
   def add_hp_bar(x: 1, y: 1)
     UI.enemy_hp_bar << {
-      enemy: self, 
-      base: Image.new(x * (self.image.width * 0.9),    y * (self.image.height * 0.15), [240, 240, 240]),
-      bar: Image.new(x * (self.image.width * 0.9 - 4), y * (self.image.height * 0.15 - 4), [124, 224, 43])
+      enemy: self,
+      base: Image.new(x * (image.width * 0.9),    y * (image.height * 0.15), [240, 240, 240]),
+      bar: Image.new(x * (image.width * 0.9 - 4), y * (image.height * 0.15 - 4), [124, 224, 43])
     }
   end
 
-
-  def add_boss_bar()
+  def add_boss_bar
     UI.boss_hp_bar << {
-      enemy: self, 
-      base: Image.new(self.image.width * 0.9, self.image.height * 0.15, [240, 240, 240]),
-      bar: Image.new(self.image.width * 0.9 - 4, self.image.height * 0.15 - 4, [124, 224, 43])
+      enemy: self,
+      base: Image.new(image.width * 0.9, image.height * 0.15, [240, 240, 240]),
+      bar: Image.new(image.width * 0.9 - 4, image.height * 0.15 - 4, [124, 224, 43])
     }
   end
 end

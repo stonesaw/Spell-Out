@@ -8,13 +8,13 @@ class Enemies
         enemy = @@list[-i]
         EnemySystem.move(enemy, now_stage, tick, player)
 
-        bullets = enemy.check(Bullet.all)
+        bullets = enemy.check(Bullet.list)
         unless bullets.empty? # hit bulett
           $se_slime.play
           EnemySystem.calc_hp(enemy, bullets[0])
 
           # delete sprite
-          Bullet.all.delete(bullets[0])
+          Bullet.list.delete(bullets[0])
           if enemy.data.hp <= 0
             $se_retro04.play
             @@list.delete_at(-i)
@@ -37,7 +37,7 @@ class Enemies
 
     def reset
       @@list = []
-    end  
+    end
   end
 end
 
