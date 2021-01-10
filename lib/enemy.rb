@@ -1,26 +1,3 @@
-class EnemyData
-  attr_accessor :name, :spell, :hp, :max_hp, :score, :var
-  attr_reader :stage_hash, :image, :anime
-
-  def initialize(name, spell, hp, score, image, anime: [])
-    @name = name.to_sym
-    @spell = spell.to_sym
-    @hp = hp.to_i
-    @max_hp = @hp
-    @score = score.to_i
-    @image = image
-    @anime = anime
-    @var = {}
-    @stage_hash = { any: proc {} }
-  end
-
-  # plz block
-  def stage_is(stage = :amy, &block)
-    stage = stage.to_sym
-    @stage_hash[stage] = block
-  end
-end
-
 class Enemy < Sprite
   attr_reader :data, :spawn_tick
   attr_accessor :hp_bar, :hp_bar_base

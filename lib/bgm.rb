@@ -3,7 +3,7 @@ class BGM
     # name: [sound, len(sec)]
     chill: [Sound.new("#{$PATH}/assets/sound/32-2.wav"), 78.0]
   }
-  @pub_play_scene = %i[play menu game_over ranking]
+  @pub_play_scene = [:play, :menu, :game_over, :ranking]
   @now = :chill
   @s_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
   @blank = 60

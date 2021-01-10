@@ -7,7 +7,7 @@ class Play < Scene
     @@font      = Font.new(80, 'Poco')
     @@font_mini = Font.new(50, 'Poco')
     @@spell_icon = Sprite.new(1000, 600, Image.new(64, 64, C_WHITE))
-    @@e_list = EnemiesDataList.new
+    @@e_data = EnemiesData.new
     @@heart_icon = Image.load("#{$PATH}/assets/image/icon_Heart.png")
 
     @@player = Player.new(:fire, (Window.width - $player_images[0][0].width) * 0.5, Window.height * 0.7, $player_images)
@@ -21,13 +21,14 @@ class Play < Scene
     $score = 0
     @@enemy_count = 0
     @@slime_count = 0
-    @@slime = @@e_list.slime
+    @@slime = @@e_data.list[:slime1]
+    Map._load
   end
 
   class << self
     def set_music
       BGM.set_s_time
-      BGM.public[:chill][0].set_volume(250)
+      BGM.public[:chill][0].set_volume(255)
     end
 
     def update
@@ -43,39 +44,22 @@ class Play < Scene
         if @@enemy_count <= 0
           @@enemy_count = rand(2..6)
           @@slime_count += 1
-          @@slime = if @@slime_count.even?
-                      @@e_list.slime
-                    else
-                      @@e_list.slime2
-                    end
+          @@slime = @@e_data.list["slime#{@@slime_count % 2 + 1}".to_sym]
         end
-        x = 100 + rand(Window.width - @@e_list.slime.image.width - 200)
-        Enemy.new(@@slime, @@tick, x, -@@e_list.slime.image.height).add_hp_bar(x: 0.7, y: 0.7)
+        x = 100 + rand(Window.width - @@slime.image.width - 200)
+        Enemy.new(@@slime, @@tick, x, -@@slime.image.height).add_hp_bar(x: 0.7, y: 0.7)
         @@enemy_count -= 1
       end
 
       # if @@tick > @@boss_spawn_ticks && Enemies.list.length == 0
-      #   x = (Window.width - @@e_list.slime.image.width) / 2
-      #   Enemy.new(@@e_list.big_slime, @@tick, x, 0).add_boss_bar
+      #   x = (Window.width - @@e_data.slime.image.width) / 2
+      #   Enemy.new(@@e_data.big_slime, @@tick, x, 0).add_boss_bar
       # end
 
       # update
       @@player.update(@@tick)
       if @@player.life <= 0
-        cover = Sprite.new(0, 0, Image.new(Window.width, Window.height, C_BLACK))
-        cover.alpha = 0
-        @@player.alpha = 255
-        i = 0
-        loop do
-          Window.update
-          cover.alpha += 15 if i % 60 == 0
-          break if cover.alpha > 255
-
-          Play.draw
-          cover.draw
-          i += 1
-        end
-        SceneManager.next(:game_over)
+        _to_scene_game_over()
       end
       Bullet.update
       Enemies.update(:any, @@tick, @@player)
@@ -86,7 +70,7 @@ class Play < Scene
       Debugger.puts ['fps : ', Window.real_fps].join
       Debugger.puts ['score : ', $score].join
       Debugger.puts ['my life : ', @@player.life].join
-      Debugger.puts ['angle : ', @@player._angle.to_i].join
+      Debugger.puts ['angle : ', @@player.direction.to_i].join
       Debugger.puts ['bullet : ', Bullet.list.length].join
       Debugger.puts ['enemy : ', Enemies.list.length].join
 
@@ -106,6 +90,23 @@ class Play < Scene
 
     def last
       $debug_mode = false
+    end
+
+    def _to_scene_game_over
+      cover = Sprite.new(0, 0, Image.new(Window.width, Window.height, C_BLACK))
+      cover.alpha = 0
+      @@player.alpha = 255
+      i = 0
+      loop do
+        Window.update
+        cover.alpha += 15 if i % 60 == 0
+        break if cover.alpha > 255
+        
+        Play.draw
+        cover.draw
+        i += 1
+      end
+      SceneManager.next(:game_over)
     end
   end
 end

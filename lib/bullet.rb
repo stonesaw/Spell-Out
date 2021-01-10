@@ -1,10 +1,10 @@
 class Bullet < Sprite
-  attr_accessor :spell, :attack, :anime, :is_anime, :anime_cnt, :_angle, :speed
+  attr_accessor :spell, :attack, :anime, :is_anime, :anime_cnt, :direction, :speed
 
-  def initialize(spell, attack, _angle, x, y, image, anime: [])
+  def initialize(spell, attack, direction, x, y, image, anime: [])
     @spell = spell.to_sym
     @attack = attack
-    @_angle = _angle.to_i
+    @direction = direction.to_i
     super
     self.x = x
     self.y = y
@@ -31,8 +31,8 @@ class Bullet < Sprite
       i = 1
       del = []
       @@list.length.times do
-        @@list[-i].x += @@list[-i].speed * Math.cos(@@list[-i]._angle * Math::PI / 180.0)
-        @@list[-i].y += @@list[-i].speed * Math.sin(@@list[-i]._angle * Math::PI / 180.0)
+        @@list[-i].x += @@list[-i].speed * Math.cos(@@list[-i].direction * Math::PI / 180.0)
+        @@list[-i].y += @@list[-i].speed * Math.sin(@@list[-i].direction * Math::PI / 180.0)
         # @@list[-i].y -= 8
         if @@list[-i].is_anime
           @@list[-i].anime_cnt = (@@list[-i].anime_cnt + 1) % @@list[-i].anime.length
@@ -68,9 +68,9 @@ class Bullet < Sprite
       @@list
     end
 
-    def fire_img
-      @@fire_img
-    end
+    # def fire_img
+    #   @@fire_img
+    # end
 
     def reset
       @@list = []

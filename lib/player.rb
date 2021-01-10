@@ -1,5 +1,5 @@
 class Player < Sprite
-  attr_accessor :spell, :life, :images, :_angle
+  attr_accessor :spell, :life, :images, :direction
 
   def initialize(spell, x, y, images)
     super
@@ -15,7 +15,7 @@ class Player < Sprite
     @has_spell[@spell] = true
     @life = 3
     @speed = 4
-    @_angle = 0 # キャラクターの画像用
+    @direction = 0 # キャラクターの向いている方向 (画像の角度ではない)
     # @@se_bullet = Sound.new("#{$PATH}/assets/sound/se_retro03.wav")
 
     @bullet_count = 0
@@ -38,15 +38,14 @@ class Player < Sprite
     else
       angle = Math.atan2(my - oy, mx - ox) * 180.0 / Math::PI
       angle = 360 + angle if angle < 0
-      angle = angle.to_i
-      @_angle = angle
+      @direction = angle
       # obj = Bullet.list + Enemies.list
       # obj.each do |o|
-      #   o.x -= @speed * Math.cos(@_angle * Math::PI / 180.0)
-      #   o.y -= @speed * Math.sin(@_angle * Math::PI / 180.0)
+      #   o.x -= @speed * Math.cos(@direction * Math::PI / 180.0)
+      #   o.y -= @speed * Math.sin(@direction * Math::PI / 180.0)
       # end
-      self.x += @speed * Math.cos(@_angle * Math::PI / 180.0)
-      self.y += @speed * Math.sin(@_angle * Math::PI / 180.0)
+      self.x += @speed * Math.cos(@direction * Math::PI / 180.0)
+      self.y += @speed * Math.sin(@direction * Math::PI / 180.0)
     end
 
     self.x = [[0, self.x].max, Window.width - image.width].min
@@ -56,12 +55,12 @@ class Player < Sprite
 
     # [右 → から時計回り][アニメーション]
     @anime_count += 1 if tick % 10 == 0
-    frame = if anime_stop
-              1
-            else
-              @anime_count % 3
-            end
-    self.image = @images[((@_angle + 23) % 360) / 45][frame]
+    if anime_stop
+      frame = 1
+    else
+      frame = @anime_count % 3
+    end
+    self.image = @images[((@direction + 23) % 360) / 45][frame]
 
     # hit enemy
     enemies = check(Enemies.list)
@@ -100,13 +99,11 @@ class Player < Sprite
 
   def _fire_bullet
     # @@se_bullet.play
-    _x = self.x + (image.width * 0.5)  + image.width  * 0.4 * Math.cos(@_angle * Math::PI / 180.0)
-    _y = self.y + (image.height * 0.6) + image.height * 0.4 * Math.sin(@_angle * Math::PI / 180.0)
+    _x = self.x + (image.width * 0.5)  + image.width  * 0.4 * Math.cos(@direction * Math::PI / 180.0)
+    _y = self.y + (image.height * 0.6) + image.height * 0.4 * Math.sin(@direction * Math::PI / 180.0)
     image = Image.new(10, 10, Bullet._spell_color[@spell])
-    Bullet.new(@spell, 20, @_angle, _x, _y, image)
-
-    # x = self.x + (self.image.width - image.width) / 2
-    # y = self.y - image.height
+    Bullet.new(@spell, 20, @direction, _x, _y, image)
+    
     # case @spell
     # when :fire
     #   anime = Bullet.fire_img
