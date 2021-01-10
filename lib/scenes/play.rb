@@ -8,7 +8,7 @@ class Play < Scene
     @@font_mini = Font.new(50, 'Poco')
     @@spell_icon = Sprite.new(1000, 600, Image.new(64, 64, C_WHITE))
     @@e_data = EnemiesData.new
-    @@heart_icon = Image.load("#{$PATH}/assets/image/icon_Heart.png")
+    # @@heart_icon = Image.load("#{$PATH}/assets/image/icon_Heart.png")
 
     @@player = Player.new(:fire, (Window.width - $player_images[0][0].width) * 0.5, Window.height * 0.7, $player_images)
     r = $player_images[0][0].width / 2
@@ -80,10 +80,18 @@ class Play < Scene
       @@player.draw
       UI.draw
 
-      @@player.life.times do |i|
-        Window.draw(14 + i * (@@heart_icon.width + 4), 14, @@heart_icon)
-      end
+      # @@player.life.times do |i|
+      #   Window.draw(14 + i * (@@heart_icon.width + 4), 14, @@heart_icon)
+      # end
       w = @@font.get_width(['SCORE : ', $score].join)
+      case(@@player.life)
+      when 0 .. 100
+        Window.draw_font(0,0,@@player.life.to_s, @@font, color: [255, 0, 0]) # red
+      when 101 .. 150
+        Window.draw_font(0,0,@@player.life.to_s, @@font, color: [255, 210, 0]) # orange
+      else
+        Window.draw_font(0,0,@@player.life.to_s, @@font, color: [70, 130, 180]) # blue
+      end
       Window.draw_font(Window.width - w - 40, -10, ['SCORE : ', $score].join, @@font)
       Window.draw_font(Window.width - 200, Window.height - 60, ['<FPS : ', Window.real_fps, '>'].join, @@font_mini, color: [230, 230, 230])
     end

@@ -13,7 +13,7 @@ class Player < Sprite
     @spell_num = @spell_list.index(@spell)
     @has_spell = @spell_list.map {|key| [key, false] }.to_h
     @has_spell[@spell] = true
-    @life = 3
+    @life = 250 #ライフ(ハートの数)
     @speed = 4
     @direction = 0 # キャラクターの向いている方向 (画像の角度ではない)
     # @@se_bullet = Sound.new("#{$PATH}/assets/sound/se_retro03.wav")
@@ -65,7 +65,7 @@ class Player < Sprite
     # hit enemy
     enemies = check(Enemies.list)
     unless enemies.empty? || @is_hit
-      @life -= 1
+      @life -= 50
       @hit_tick = tick
       @is_hit = true
       Enemies.list.delete(enemies[0])
