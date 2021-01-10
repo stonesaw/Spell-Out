@@ -15,9 +15,9 @@ Font.install("#{$PATH}/assets/font/Poco.ttf")
 Font.install("#{$PATH}/assets/font/misaki_gothic.ttf")
 
 $debug_mode = false
-
-$se_retro04 = Sound.new("#{$PATH}/assets/sound/se_retro04.wav").set_volume(220)
-$se_slime =   Sound.new("#{$PATH}/assets/sound/slime1.wav")
+$volume = 1
+$se_retro04 = Sound.new("#{$PATH}/assets/sound/se_retro04.wav").set_volume(255 * $volume)
+$se_slime =   Sound.new("#{$PATH}/assets/sound/slime1.wav").set_volume(255 * $volume)
 
 _img = Image.load_tiles("#{$PATH}/assets/image/wizard.png", 6, 4)
 load_setting = [4, 3, 0, 1, 2, 7, 6, 5]

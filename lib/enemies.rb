@@ -21,12 +21,14 @@ class Enemies
         bullets = enemy.check(Bullet.list)
         unless bullets.empty? # hit bulett
           $se_slime.play
+          $se_slime.set_volume(225 * $volume)
           _calc_hp(enemy, bullets[0])
 
           # delete sprite
           Bullet.list.delete(bullets[0])
           if enemy.data.hp <= 0
             $se_retro04.play
+            $se_retro04.set_volume(255 * $volume)
             @@list.delete_at(-i)
             $score += enemy.data.score
           end

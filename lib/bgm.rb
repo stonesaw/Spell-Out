@@ -7,14 +7,15 @@ class BGM
   @now = :chill
   @s_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
   @blank = 60
+  $volume = 1
 
   class << self
     attr_reader :public, :s_time
     attr_accessor :now
 
     def update
+      @public[@now][0].set_volume(255 * $volume)
       @public[@now][0].stop unless @pub_play_scene.include?(SceneManager.now)
-
       # bgm loop
       bgm_end = Process.clock_gettime(Process::CLOCK_MONOTONIC)
       diff = (bgm_end - @s_time).floor(1)

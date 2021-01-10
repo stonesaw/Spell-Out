@@ -34,7 +34,7 @@ class EnemiesData
     @list[:slime1].stage_is(:any) do |me, tick, _player|
       tick = me.spawn_tick - tick
       me.collision = [64, 100, 27]
-      me.y += 2
+      me.y += 4
       me._anime_next if tick % 10 == 0
     end
 
