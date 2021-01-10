@@ -20,6 +20,7 @@ class Player < Sprite
 
     @bullet_count = 0
     @anime_count = 0
+    @mouse_down_count = 0
     @hit_tick = 0
     @is_hit = false
   end
@@ -78,6 +79,7 @@ class Player < Sprite
       @is_hit = false
     end
 
+    # Input
     # spell change
     @spell_num -= Input.mouse_wheel_pos / 120
     Input.mouse_wheel_pos = 0
@@ -85,13 +87,27 @@ class Player < Sprite
     @spell_num += 1 if Input.key_push?(K_X)
     @spell = @spell_list[@spell_num % @spell_list.length]
 
-    if Input.key_push?(K_SPACE) || Input.mouse_push?(0)
+    if !Input.mouse_down?(1) && (Input.key_push?(K_SPACE) || Input.mouse_push?(0))
       @bullet_count = 0
       _fire_bullet
     end
-    if PlayerSetting.auto_attack || Input.key_down?(K_SPACE) || Input.mouse_down?(0)
+    if !Input.mouse_down?(1) && (PlayerSetting.auto_attack || Input.key_down?(K_SPACE) || Input.mouse_down?(0))
       @bullet_count += 1
       _fire_bullet if @bullet_count % 14 == 0
+    end
+
+    if Input.mouse_down?(1)
+      @mouse_down_count += 1
+    else
+      @mouse_down_count = 0
+    end
+
+    if @mouse_down_count >= 60
+      _x = self.x + (image.width * 0.5)  + image.width  * 0.4 * Math.cos(@direction * Math::PI / 180.0)
+      _y = self.y + (image.height * 0.6) + image.height * 0.4 * Math.sin(@direction * Math::PI / 180.0)
+      image = Image.new(20, 20, Bullet._spell_color[@spell])
+      Bullet.new(@spell, 20, @direction, _x, _y, image)
+      @mouse_down_count = 0
     end
   end
 
@@ -121,6 +137,10 @@ class Player < Sprite
 
   def draw
     super
+    x1 = self.x + self.image.width
+    y1 = self.y
+    Window.draw_box(x1, y1, x1 + 60, y1 + 60, C_WHITE)
+    Window.draw_box_fill(x1, y1 + 60 - @mouse_down_count, x1 + 60, y1 + 60, C_CYAN)
   end
 
   def has_spell?(spell)
