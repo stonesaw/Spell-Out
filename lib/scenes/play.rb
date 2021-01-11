@@ -83,6 +83,7 @@ class Play < Scene
       end
       Window.draw_font(Window.width - w - 40, -10, ['SCORE : ', $score].join, @@font)
       Window.draw_font(Window.width - 200, Window.height - 60, ['<FPS : ', Window.real_fps, '>'].join, @@font_mini, color: [230, 230, 230])
+      Window.draw_font(Window.width - w -40, 30, ['LEVEL: ', $level].join, @@font)
     end
 
     def last
