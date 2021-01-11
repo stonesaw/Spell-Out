@@ -20,9 +20,16 @@ class Player < Sprite
 
     @bullet_count = 0
     @anime_count = 0
-    @mouse_down_count = 0
+    @_mouse_down_count = 0
     @hit_tick = 0
     @is_hit = false
+    @charge_percent = 0.0
+    @charge_circle_img = []
+    9.times do |i|
+      @charge_circle_img << Image.load("#{$PATH}/assets/image/circle#{i}.png")
+        .set_color_key(C_BLACK)
+        .flush([200, 255, 255, 255]) # 色を変更
+    end
   end
 
   def update(tick)
@@ -96,19 +103,22 @@ class Player < Sprite
       _fire_bullet if @bullet_count % 14 == 0
     end
 
-    if Input.mouse_down?(1)
-      @mouse_down_count += 1
-    else
-      @mouse_down_count = 0
-    end
-
-    if @mouse_down_count >= 60
+    if @charge_percent >= 1.0 && Input.mouse_release?(1)
       _x = self.x + (image.width * 0.5)  + image.width  * 0.4 * Math.cos(@direction * Math::PI / 180.0)
       _y = self.y + (image.height * 0.6) + image.height * 0.4 * Math.sin(@direction * Math::PI / 180.0)
       image = Image.new(20, 20, Bullet._spell_color[@spell])
       Bullet.new(@spell, 20, @direction, _x, _y, image)
-      @mouse_down_count = 0
+      @_mouse_down_count = 0
     end
+
+    if Input.mouse_down?(1)
+      @_mouse_down_count += 1
+      @_mouse_down_count = [@_mouse_down_count, 60].min
+    else
+      @_mouse_down_count = 0
+    end
+
+    @charge_percent = @_mouse_down_count.to_f / 60.0
   end
 
   private
@@ -136,11 +146,19 @@ class Player < Sprite
   public
 
   def draw
+    if $debug_mode # キャラの当たり判定の範囲
+      x1 = self.x + 8
+      y1 = self.y + 36
+      Window.draw_box(x1, y1, x1 + 62, y1 + 76, C_WHITE)
+    end
+    
+    # self.image
     super
-    x1 = self.x + self.image.width
-    y1 = self.y
-    Window.draw_box(x1, y1, x1 + 60, y1 + 60, C_WHITE)
-    Window.draw_box_fill(x1, y1 + 60 - @mouse_down_count, x1 + 60, y1 + 60, C_CYAN)
+    
+    # ため攻撃のゲージ
+    _x = self.x - 20
+    _y = self.y + 10
+    Window.draw(_x, _y, @charge_circle_img[(@charge_percent * 8).to_i])
   end
 
   def has_spell?(spell)

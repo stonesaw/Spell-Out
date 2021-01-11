@@ -23,7 +23,6 @@ class EnemySpawnSystem
           _y = -@@slime.image.height - rand(200)
         end
         Enemy.new(@@slime, tick, _x, _y).add_hp_bar(x: 0.7, y: 0.7)
-        p "spawn", _x, _y
         @@enemy_count -= 1
       end
     end
