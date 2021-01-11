@@ -34,12 +34,25 @@ class Enemies
           end
           next
         end
-        @@list.delete_at(-i) if enemy.y > Window.height
+        # @@list.delete_at(-i) if enemy.y > Window.height
         i += 1
       end
     end
 
-    
+
+    def draw
+      Sprite.draw(@@list)
+    end
+
+    def list
+      @@list
+    end
+
+    def reset
+      @@list = []
+    end
+
+    private
     def _move(enemy, now_stage, tick, player)
       stg = now_stage
       stg = :any unless enemy.data.stage_hash.has_key?(now_stage)
@@ -71,18 +84,6 @@ class Enemies
         return true if bullet.spell == to && enemy.data.spell == from
       end
       false
-    end
-
-    def draw
-      Sprite.draw(@@list)
-    end
-
-    def list
-      @@list
-    end
-
-    def reset
-      @@list = []
     end
   end
 end

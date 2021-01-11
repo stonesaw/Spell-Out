@@ -7,22 +7,19 @@ class Play < Scene
     @@font      = Font.new(80, 'Poco')
     @@font_mini = Font.new(50, 'Poco')
     @@spell_icon = Sprite.new(1000, 600, Image.new(64, 64, C_WHITE))
-    @@e_data = EnemiesData.new
     # @@heart_icon = Image.load("#{$PATH}/assets/image/icon_Heart.png")
-
+    
     @@player = Player.new(:fire, (Window.width - $player_images[0][0].width) * 0.5, Window.height * 0.7, $player_images)
     r = $player_images[0][0].width / 2
     Input.set_mouse_pos(@@player.x * Window.scale + r, @@player.y * Window.scale + r)
     Bullet.reset
     Enemies.reset
+    EnemiesData.new
+    EnemySpawnSystem.new
+    
     @@tick = 0
-    @@boss_spawn_ticks = 180
-    @@is_boss = false
     $score = 0
-    @@enemy_count = 0
-    @@slime_count = 0
-    @@slime = @@e_data.list[:slime1]
-    Map._load
+    # Map._load
   end
 
   class << self
@@ -40,20 +37,12 @@ class Play < Scene
       SceneManager.next(:menu) if Input.key_release?(K_TAB)
 
       # spown enemy
-      if @@tick % 200 == 0 && !@@is_boss
-        if @@enemy_count <= 0
-          @@enemy_count = rand(2..6)
-          @@slime_count += 1
-          @@slime = @@e_data.list["slime#{@@slime_count % 2 + 1}".to_sym]
-        end
-        x = 100 + rand(Window.width - @@slime.image.width - 200)
-        Enemy.new(@@slime, @@tick, x, -@@slime.image.height).add_hp_bar(x: 0.7, y: 0.7)
-        @@enemy_count -= 1
-      end
+      EnemySpawnSystem.update(@@tick)
+      
 
       # if @@tick > @@boss_spawn_ticks && Enemies.list.length == 0
-      #   x = (Window.width - @@e_data.slime.image.width) / 2
-      #   Enemy.new(@@e_data.big_slime, @@tick, x, 0).add_boss_bar
+      #   x = (Window.width - EnemiesData.slime.image.width) / 2
+      #   Enemy.new(EnemiesData.big_slime, @@tick, x, 0).add_boss_bar
       # end
 
       # update
@@ -109,7 +98,7 @@ class Play < Scene
         Window.update
         cover.alpha += 15 if i % 60 == 0
         break if cover.alpha > 255
-        
+
         Play.draw
         cover.draw
         i += 1

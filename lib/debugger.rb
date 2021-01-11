@@ -21,7 +21,7 @@ class Debugger
     end
 
     def puts(str)
-      @@_str += [str.chomp.to_s, "\n"].join
+      @@_str += [str.to_s.chomp, "\n"].join
       self
     end
 
