@@ -83,7 +83,7 @@ class Title < Scene
       Bullet.list.each do |b|
         @@hit_spell = b.spell if b.x >= Window.width - 10
       end
-      Bullet.update
+      Bullet.update(nil, nil)
     end
 
     def draw
