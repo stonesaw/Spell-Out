@@ -1,11 +1,11 @@
 class Bullet < Sprite
-  attr_accessor :spell, :attack, :anime, :is_anime, :_anime_cnt, :direction, :speed
+  attr_accessor :spell, :attack, :anime, :is_anime, :_anime_cnt, :direction, :speed, :wrap
   attr_reader :data
 
   # 引数 data は、BulletData を参照
   # 通常の Bullet の場合は nil
   # ため攻撃のときのみ、data を与える
-  def initialize(spell, attack, direction, x, y, image, anime: [])
+  def initialize(spell, attack, direction, x, y, image, anime: [], wrap: false)
     @spell = spell.to_sym
     @attack = attack
     @direction = direction.to_i
@@ -17,6 +17,7 @@ class Bullet < Sprite
     @anime = anime
     @_anime_cnt = 0
     @is_anime = !anime.empty?
+    @wrap = wrap
 
     @speed = 12
     @@list << self
@@ -63,9 +64,16 @@ class Bullet < Sprite
     end
 
     
-
     def draw
-      Sprite.draw(@@list)
+      @@list.each do |bullet|
+        bullet.draw unless bullet.wrap
+      end
+    end
+    
+    def draw_wrapper
+      @@list.each do |bullet|
+        bullet.draw if bullet.wrap
+      end
     end
 
     def _spell_color
@@ -92,7 +100,7 @@ Bullet._load
 
 
 class ChargeBullet < Sprite
-  attr_accessor :spell, :attack, :anime, :is_anime, :_anime_cnt, :direction
+  attr_accessor :spell, :attack, :anime, :is_anime, :_anime_cnt, :direction, :wrap
   attr_reader :data, :spawn_tick
 
   def initialize(data, now_tick, x, y, direction)
@@ -107,6 +115,7 @@ class ChargeBullet < Sprite
     @attack = @data.attack
     @_anime_cnt = 0
     @spawn_tick = now_tick
+    @wrap = @data.wrap
 
     Bullet.list << self
     self

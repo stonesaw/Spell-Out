@@ -68,6 +68,7 @@ class Play < Scene
       Bullet.draw
       Enemies.draw
       @@player.draw
+      Bullet.draw_wrapper
       UI.draw
 
       # @@player.life.times do |i|

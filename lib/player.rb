@@ -1,5 +1,5 @@
 class Player < Sprite
-  attr_accessor :spell, :life, :images, :direction
+  attr_accessor :spell, :max_life, :life, :images, :direction
 
   def initialize(spell, x, y, images)
     super
@@ -13,14 +13,17 @@ class Player < Sprite
     @spell_num = @spell_list.index(@spell)
     @has_spell = @spell_list.map {|key| [key, false] }.to_h
     @has_spell[@spell] = true
-    @life = 250 #ライフ(ハートの数)
+    @max_life = 250
+    @life = 250
     @speed = 4
     @direction = 0 # キャラクターの向いている方向 (画像の角度ではない)
+    @cool_time = 0
     # @@se_bullet = Sound.new("#{$PATH}/assets/sound/se_retro03.wav")
 
     @bullet_count = 0
     @anime_count = 0
     @_mouse_down_count = 0
+    @_old_spell_num = nil
     @hit_tick = 0
     @is_hit = false
     @charge_percent = 0.0
@@ -38,14 +41,13 @@ class Player < Sprite
   end
 
   def update(tick)
-    anime_stop = false
-
     # player controll
     mx = Mouse.x
     my = Mouse.y
     ox = x + (image.width / 2)
     oy = y + (image.height / 2)
-
+    
+    anime_stop = false
     if (0..10).include?((ox - mx).abs) && (0..10).include?((oy - my).abs)
       anime_stop = true
     else
@@ -95,34 +97,40 @@ class Player < Sprite
 
     # Input
     # spell change
+    @_old_spell_num = @spell_num
     @spell_num -= Input.mouse_wheel_pos / 120
     Input.mouse_wheel_pos = 0
     @spell_num -= 1 if Input.key_push?(K_Z)
     @spell_num += 1 if Input.key_push?(K_X)
     @spell = @spell_list[@spell_num % @spell_list.length]
 
-    if !Input.mouse_down?(1) && (Input.key_push?(K_SPACE) || Input.mouse_push?(0))
-      @bullet_count = 0
-      _fire_bullet(tick)
-    end
-    if !Input.mouse_down?(1) && (PlayerSetting.auto_attack || Input.key_down?(K_SPACE) || Input.mouse_down?(0))
-      @bullet_count += 1
-      _fire_bullet(tick) if @bullet_count % 14 == 0
-    end
+    @charge_percent = 0.0 if @_old_spell_num != @spell_num
+    @cool_time -= 1
 
-    if @charge_percent >= 1.0 && Input.mouse_release?(1)
-      _fire_bullet(tick, 2)
-      @_mouse_down_count = 0
+    if @cool_time <= 0
+      if !Input.mouse_down?(1) && (Input.key_push?(K_SPACE) || Input.mouse_push?(0))
+        @bullet_count = 0
+        _fire_bullet(tick)
+      end
+      if !Input.mouse_down?(1) && (PlayerSetting.auto_attack || Input.key_down?(K_SPACE) || Input.mouse_down?(0))
+        @bullet_count += 1
+        _fire_bullet(tick) if @bullet_count % 14 == 0
+      end
+  
+      if @charge_percent >= 1.0 && Input.mouse_release?(1)
+        _fire_bullet(tick, 2)
+        @_mouse_down_count = 0
+      end
+  
+      if Input.mouse_down?(1)
+        @_mouse_down_count += 1
+        @_mouse_down_count = [@_mouse_down_count, BulletData.charge_tick[@spell]].min
+      else
+        @_mouse_down_count = 0
+      end
+  
+      @charge_percent = @_mouse_down_count.to_f / BulletData.charge_tick[@spell]
     end
-
-    if Input.mouse_down?(1)
-      @_mouse_down_count += 1
-      @_mouse_down_count = [@_mouse_down_count, 60].min
-    else
-      @_mouse_down_count = 0
-    end
-
-    @charge_percent = @_mouse_down_count.to_f / 60.0
   end
 
   private
@@ -137,11 +145,17 @@ class Player < Sprite
     elsif level == 2
       case @spell
       when :fire
-        _x = self.x - 30 + self.image.width  * 0.4  * Math.cos(@direction * Math::PI / 180.0)
-        _y = self.y - 50 + self.image.height * 0.35 * Math.sin(@direction * Math::PI / 180.0)
+        _x = BulletData.fire_x(self)
+        _y = BulletData.fire_y(self)
         ChargeBullet.new(BulletData.list[:fire], tick, _x, _y, @direction)
+        @cool_time = 100
+      when :wind
+        _x = BulletData.fire_x(self)
+        _y = BulletData.fire_y(self)
+        ChargeBullet.new(BulletData.list[:wind], tick, _x, _y, @direction)
+        @cool_time = 100
       else
-        raise ArgumentError.new("player fire_ballet(level)")
+        raise NameError.new("undefined #{@spell} from  Player._fire_ballet()")
       end
     end
   end
