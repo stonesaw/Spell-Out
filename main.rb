@@ -17,6 +17,7 @@ Font.install("#{$PATH}/assets/font/misaki_gothic.ttf")
 $debug_mode = false
 $volume = 1
 $level = 1
+$point = 0
 $se_retro04 = Sound.new("#{$PATH}/assets/sound/se_retro04.wav").set_volume(96 + (255 - 96) * $volume)
 $se_slime =   Sound.new("#{$PATH}/assets/sound/slime1.wav").set_volume(96 + (255 - 96) * $volume)
 
