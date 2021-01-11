@@ -31,6 +31,9 @@ class Enemies
             $se_retro04.set_volume(255 * $volume)
             @@list.delete_at(-i)
             $score += enemy.data.score
+            if $score % 100 == 0
+              $level += 1
+            end
           end
           next
         end
