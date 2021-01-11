@@ -64,8 +64,11 @@ class EnemiesData
     @@list[:golem] = IEnemyData.new('ゴーレム', :dark, 500, 1000, 100, golem_img[0], anime: golem_img)
     @@list[:golem].stage_is(:any) do |me, tick, _player|
       passed_tick = tick - me.spawn_tick
-      me.collision = [64, 100, 27]
       me.y += 2
+
+      if me.y > Window.height
+        me.y = -300
+      end
       me._anime_next if passed_tick % 10 == 0
     end
   end

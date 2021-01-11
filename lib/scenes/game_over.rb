@@ -14,9 +14,10 @@ class GameOver < Scene
   @@alerts_stay_cnt = []
   @@alerts_alpha = []
 
-  def initialize
-    super
+  def initialize(symbol)
+    super()
     Window.bgcolor = [0, 0, 0]
+    @@symbol = symbol
   end
 
   class << self
@@ -38,7 +39,12 @@ class GameOver < Scene
     end
 
     def draw
-      Window.draw_font((Window.width - @@title_width) / 2, (Window.height - @@font_big.size) * 0.3, 'Game Over', @@font_big)
+      if @@symbol == :game_clear
+        @@title_width = @@font_big.get_width('Game Clear')
+        Window.draw_font((Window.width - @@title_width) / 2, (Window.height - @@font_big.size) * 0.3, 'Game Clear', @@font_big)
+      else
+        Window.draw_font((Window.width - @@title_width) / 2, (Window.height - @@font_big.size) * 0.3, 'Game Over', @@font_big)
+      end
       score_width = @@score_is + @@font_nomal.get_width('0') * $score.to_s.length
       Window.draw_font((Window.width - score_width) / 2, (Window.height - @@font_nomal.size) * 0.4, ['score : ', $score].join, @@font_nomal)
       @@tb.draw

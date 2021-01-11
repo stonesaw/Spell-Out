@@ -48,9 +48,10 @@ class Play < Scene
 
       # update
       @@player.update(@@tick)
-      if @@player.life <= 0
-        _to_scene_game_over()
-      end
+
+      _to_scene_game_over() if @@player.life <= 0
+      _to_scene_game_clear() if EnemySpawnSystem.is_boss? && Enemies.list.empty?
+      
       Bullet.update(@@tick, @@player)
       Enemies.update(:any, @@tick, @@player)
       @@tick += 1
@@ -58,6 +59,7 @@ class Play < Scene
 
     def draw
       Debugger.puts ['fps : ', Window.real_fps].join
+      Debugger.puts ['tick : ', @@tick].join
       Debugger.puts ['score : ', $score].join
       Debugger.puts ['my life : ', @@player.life].join
       Debugger.puts ['player direction : ', @@player.direction.to_i].join
@@ -106,7 +108,24 @@ class Play < Scene
         cover.draw
         i += 1
       end
-      SceneManager.next(:game_over)
+      SceneManager.next(:game_over, nil)
+    end
+
+    def _to_scene_game_clear
+      cover = Sprite.new(0, 0, Image.new(Window.width, Window.height, C_BLACK))
+      cover.alpha = 0
+      @@player.alpha = 255
+      i = 0
+      loop do
+        Window.update
+        cover.alpha += 15 if i % 60 == 0
+        break if cover.alpha > 255
+    
+        Play.draw
+        cover.draw
+        i += 1
+      end
+      SceneManager.next(:game_over, :game_clear)
     end
   end
 end
