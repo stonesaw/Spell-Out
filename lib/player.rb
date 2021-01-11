@@ -30,6 +30,11 @@ class Player < Sprite
         .set_color_key(C_BLACK)
         .flush([200, 255, 255, 255]) # 色を変更
     end
+
+    @fire_img = []
+    1.times do |i|
+      @fire_img << Image.load("#{$PATH}/assets/image/fire#{i}.png")
+    end
   end
 
   def update(tick)
@@ -70,6 +75,7 @@ class Player < Sprite
     end
     self.image = @images[((@direction + 23) % 360) / 45][frame]
 
+
     # hit enemy
     enemies = check(Enemies.list)
     unless enemies.empty? || @is_hit
@@ -86,6 +92,7 @@ class Player < Sprite
       @is_hit = false
     end
 
+
     # Input
     # spell change
     @spell_num -= Input.mouse_wheel_pos / 120
@@ -96,18 +103,15 @@ class Player < Sprite
 
     if !Input.mouse_down?(1) && (Input.key_push?(K_SPACE) || Input.mouse_push?(0))
       @bullet_count = 0
-      _fire_bullet
+      _fire_bullet(tick)
     end
     if !Input.mouse_down?(1) && (PlayerSetting.auto_attack || Input.key_down?(K_SPACE) || Input.mouse_down?(0))
       @bullet_count += 1
-      _fire_bullet if @bullet_count % 14 == 0
+      _fire_bullet(tick) if @bullet_count % 14 == 0
     end
 
     if @charge_percent >= 1.0 && Input.mouse_release?(1)
-      _x = self.x + (image.width * 0.5)  + image.width  * 0.4 * Math.cos(@direction * Math::PI / 180.0)
-      _y = self.y + (image.height * 0.6) + image.height * 0.4 * Math.sin(@direction * Math::PI / 180.0)
-      image = Image.new(20, 20, Bullet._spell_color[@spell])
-      Bullet.new(@spell, 20, @direction, _x, _y, image)
+      _fire_bullet(tick, 2)
       @_mouse_down_count = 0
     end
 
@@ -123,24 +127,24 @@ class Player < Sprite
 
   private
 
-  def _fire_bullet
+  def _fire_bullet(tick, level = 1)
     # @@se_bullet.play
-    _x = self.x + (image.width * 0.5)  + image.width  * 0.4 * Math.cos(@direction * Math::PI / 180.0)
-    _y = self.y + (image.height * 0.6) + image.height * 0.4 * Math.sin(@direction * Math::PI / 180.0)
-    image = Image.new(10, 10, Bullet._spell_color[@spell])
-    Bullet.new(@spell, 20, @direction, _x, _y, image)
-    
-    # case @spell
-    # when :fire
-    #   anime = Bullet.fire_img
-    #   image = Bullet.fire_img[0]
-    #   x = self.x + (self.image.width - image.width) / 2
-    #   y = self.y - image.height
-    #   Bullet.new(@spell, 10, x, y, image, anime: anime).collision = [20, 35, 70, 73]
-    # else
-    #   anime = []
-    #   Bullet.new(@spell, 10, x, y, image, anime: anime)
-    # end
+    if level == 1
+      _x = self.x + (self.image.width * 0.5)  + self.image.width  * 0.4 * Math.cos(@direction * Math::PI / 180.0)
+      _y = self.y + (self.image.height * 0.6) + self.image.height * 0.4 * Math.sin(@direction * Math::PI / 180.0)
+      img = Image.new(10, 10, Bullet._spell_color[@spell])
+      Bullet.new(@spell, 20, @direction, _x, _y, img)
+    elsif level == 2
+      case @spell
+      when :fire
+        _x = self.x - 30 + self.image.width  * 0.4  * Math.cos(@direction * Math::PI / 180.0)
+        _y = self.y - 50 + self.image.height * 0.35 * Math.sin(@direction * Math::PI / 180.0)
+        ChargeBullet.new(BulletData.list[:fire], tick, _x, _y, @direction)
+        p "spawn fire charge"
+      else
+        raise ArgumentError.new("player fire_ballet(level)")
+      end
+    end
   end
 
   public
@@ -150,6 +154,11 @@ class Player < Sprite
       x1 = self.x + 8
       y1 = self.y + 36
       Window.draw_box(x1, y1, x1 + 62, y1 + 76, C_WHITE)
+      center_x = self.x - 30
+      center_y = self.y - 50
+      _x = center_x + self.image.width  * 0.4  * Math.cos(@direction * Math::PI / 180.0)
+      _y = center_y + self.image.height * 0.35 * Math.sin(@direction * Math::PI / 180.0)
+      Window.draw_rot(_x, _y, BulletData.list[:fire].image, @direction + 90, 64, 128)
     end
     
     # self.image

@@ -15,8 +15,9 @@ class Play < Scene
     Bullet.reset
     Enemies.reset
     EnemiesData.new
+    BulletData.new
     EnemySpawnSystem.new
-    
+
     @@tick = 0
     $score = 0
     # Map._load
@@ -50,7 +51,7 @@ class Play < Scene
       if @@player.life <= 0
         _to_scene_game_over()
       end
-      Bullet.update
+      Bullet.update(@@tick, @@player)
       Enemies.update(:any, @@tick, @@player)
       @@tick += 1
     end
