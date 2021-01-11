@@ -33,7 +33,7 @@ class EnemiesData
     boss = Image.load_tiles("#{$PATH}/assets/image/Golem_stone.png", 6, 4)
     golem_img = [boss[0], boss[1], boss[2]]
 
-    # golem_img = Image.load_tiles
+
     @@list[:slime1] = IEnemyData.new('水スライム', :water, 100, 10, 10, slime_img[0], anime: slime_img)
     @@list[:slime1].stage_is(:any) do |me, tick, _player|
       passed_tick = tick - me.spawn_tick
