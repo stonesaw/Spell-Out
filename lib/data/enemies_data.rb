@@ -30,11 +30,23 @@ class EnemiesData
     @@list = {}
     slime_img = Image.load_tiles("#{$PATH}/assets/image/slime.png", 3, 1)
     slime2_img = Image.load_tiles("#{$PATH}/assets/image/slime2.png", 3, 1)
+    boss = Image.load_tiles("#{$PATH}/assets/image/Golem_stone.png", 6, 4)
+    golem_img = [boss[0], boss[1], boss[2]]
+
+    golem_img = Image.load_tiles
     @@list[:slime1] = IEnemyData.new('水スライム', :water, 100, 10, 10, slime_img[0], anime: slime_img)
     @@list[:slime1].stage_is(:any) do |me, tick, _player|
       passed_tick = tick - me.spawn_tick
       me.collision = [64, 100, 27]
       me.y += 4
+      me._anime_next if passed_tick % 10 == 0
+    end
+
+    @@list[:slime1] = IEnemyData.new('ゴーレム', :dark, 500, 1000, 100, golem_img[0], anime: golem_img)
+    @@list[:slime1].stage_is(:any) do |me, tick, _player|
+      passed_tick = tick - me.spawn_tick
+      me.collision = [64, 100, 27]
+      me.y += 2
       me._anime_next if passed_tick % 10 == 0
     end
 
