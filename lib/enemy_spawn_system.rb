@@ -31,7 +31,7 @@ class EnemySpawnSystem
       if tick >= 600
         Enemies.list.clear if !@@is_boss
         @@is_boss = true
-        _x = 100 + rand(Window.width - EnemiesData.list[:gole].image.width - 100)
+        _x = 100 + rand(Window.width - EnemiesData.list[:golem].image.width - 100)
         _y = -EnemiesData.list[:golem].image.height - rand(200)
         if tick % 200 == 0 && @@boss_count < 3
           @@boss_count += 1
