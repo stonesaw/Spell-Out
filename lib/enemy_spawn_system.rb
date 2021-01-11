@@ -17,12 +17,19 @@ class EnemySpawnSystem
           @@slime_count += 1
           @@slime = EnemiesData.list["slime#{@@slime_count % 2 + 1}".to_sym]
         end
-        if @@slime_count % 2 == 1
-          _x = Window.width / 2
-          _y = Window.height * 0.5
-        else
+        case(rand(3))
+        when 1
+          _y = 100 + rand(Window.height - @@slime.image.height - 100)
+          _x = -@@slime.image.width - rand(200)       
+        when 2
           _x = 100 + rand(Window.width - @@slime.image.width - 100)
           _y = -@@slime.image.height - rand(200)
+        when 3
+          _y = 100 + rand(Window.width - @@slime.image.width - 100)
+          _x = -@@slime.image.height - rand(200)
+        else
+          _y = 100 + rand(Window.height - @@slime.image.height - 100)
+          _x = -@@slime.image.width - rand(200)
         end
         Enemy.new(@@slime, tick, _x, _y).add_hp_bar(x: 0.7, y: 0.7)
         @@enemy_count -= 1
