@@ -77,9 +77,9 @@ class Player < Sprite
     end
     self.image = @images[((@direction + 23) % 360) / 45][frame]
 
-
+    
     # hit enemy
-    enemies = check(Enemies.list)
+    enemies = self.check(Enemies.list)# unless Enemies.list.empty?
     unless enemies.empty? || @is_hit
       @life -= 50
       @hit_tick = tick

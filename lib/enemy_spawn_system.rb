@@ -5,11 +5,13 @@ class EnemySpawnSystem
     @@enemy_count = 0
     @@slime_count = 0
     @@slime = EnemiesData.list[:slime1]
+    @@boss_count = 0
   end
 
   class << self
     def update(tick)
-      if tick % 160 == 0 && !@@is_boss
+      # TODO スライムは画面の上下左右の端からランダムで出現
+      if tick % 160 == 0 && !@@is_boss && tick < 600
         if @@enemy_count <= 0
           @@enemy_count = rand(2..6)
           @@slime_count += 1
@@ -24,6 +26,17 @@ class EnemySpawnSystem
         end
         Enemy.new(@@slime, tick, _x, _y).add_hp_bar(x: 0.7, y: 0.7)
         @@enemy_count -= 1
+      end
+      
+      if tick >= 600
+        Enemies.list.clear if !@@is_boss
+        @@is_boss = true
+        _x = 100 + rand(Window.width - EnemiesData.list[:gole].image.width - 100)
+        _y = -EnemiesData.list[:golem].image.height - rand(200)
+        if tick % 200 == 0 && @@boss_count < 3
+          @@boss_count += 1
+          Enemy.new(EnemiesData.list[:golem], tick, _x, _y).add_hp_bar 
+        end
       end
     end
 
