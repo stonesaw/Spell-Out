@@ -60,7 +60,7 @@ class Play < Scene
       Debugger.puts ['fps : ', Window.real_fps].join
       Debugger.puts ['score : ', $score].join
       Debugger.puts ['my life : ', @@player.life].join
-      Debugger.puts ['angle : ', @@player.direction.to_i].join
+      Debugger.puts ['player direction : ', @@player.direction.to_i].join
       Debugger.puts ['bullet : ', Bullet.list.length].join
       Debugger.puts ['enemy : ', Enemies.list.length].join
 

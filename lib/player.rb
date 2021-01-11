@@ -140,7 +140,6 @@ class Player < Sprite
         _x = self.x - 30 + self.image.width  * 0.4  * Math.cos(@direction * Math::PI / 180.0)
         _y = self.y - 50 + self.image.height * 0.35 * Math.sin(@direction * Math::PI / 180.0)
         ChargeBullet.new(BulletData.list[:fire], tick, _x, _y, @direction)
-        p "spawn fire charge"
       else
         raise ArgumentError.new("player fire_ballet(level)")
       end
@@ -154,11 +153,11 @@ class Player < Sprite
       x1 = self.x + 8
       y1 = self.y + 36
       Window.draw_box(x1, y1, x1 + 62, y1 + 76, C_WHITE)
-      center_x = self.x - 30
-      center_y = self.y - 50
-      _x = center_x + self.image.width  * 0.4  * Math.cos(@direction * Math::PI / 180.0)
-      _y = center_y + self.image.height * 0.35 * Math.sin(@direction * Math::PI / 180.0)
-      Window.draw_rot(_x, _y, BulletData.list[:fire].image, @direction + 90, 64, 128)
+      # center_x = self.x - 30
+      # center_y = self.y - 50
+      # _x = center_x + self.image.width  * 0.4  * Math.cos(@direction * Math::PI / 180.0)
+      # _y = center_y + self.image.height * 0.35 * Math.sin(@direction * Math::PI / 180.0)
+      # Window.draw_rot(_x, _y, BulletData.list[:fire].image, @direction + 90, 64, 128)
     end
     
     # self.image

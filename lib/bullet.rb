@@ -59,6 +59,7 @@ class Bullet < Sprite
       del.each do |i|
         @@list.delete_at(-i)
       end
+      Sprite.clean(@@list)
     end
 
     
