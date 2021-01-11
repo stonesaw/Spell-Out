@@ -14,7 +14,7 @@ class BGM
     attr_accessor :now
 
     def update
-      @public[@now][0].set_volume(255 * $volume)
+      @public[@now][0].set_volume(96 + (255 - 96) * $volume)
       @public[@now][0].stop unless @pub_play_scene.include?(SceneManager.now)
       # bgm loop
       bgm_end = Process.clock_gettime(Process::CLOCK_MONOTONIC)
