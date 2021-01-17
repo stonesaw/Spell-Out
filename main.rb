@@ -15,11 +15,6 @@ Font.install("#{$PATH}/assets/font/Poco.ttf")
 Font.install("#{$PATH}/assets/font/misaki_gothic.ttf")
 
 $debug_mode = false
-$volume = 1
-$level = 1
-$point = 0
-$se_retro04 = Sound.new("#{$PATH}/assets/sound/se_retro04.wav").set_volume(96 + (255 - 96) * $volume)
-$se_slime =   Sound.new("#{$PATH}/assets/sound/slime1.wav").set_volume(96 + (255 - 96) * $volume)
 
 _img = Image.load_tiles("#{$PATH}/assets/image/wizard.png", 6, 4)
 load_setting = [4, 3, 0, 1, 2, 7, 6, 5]
@@ -29,12 +24,14 @@ $player_images = []
   $player_images[i] = [_img[s], _img[s + 1], _img[s + 2]]
 end
 
-require_relative 'lib/wrapper'
-require_relative 'lib/scene_manager'
-require_relative 'lib/debugger'
-require_relative 'lib/bgm'
-require_relative 'lib/ui'
-require_relative 'lib/text_box'
+require_relative 'lib/utils/wrapper'
+require_relative 'lib/utils/scene_manager'
+require_relative 'lib/utils/debugger'
+require_relative 'lib/utils/bgm'
+require_relative 'lib/utils/se'
+require_relative 'lib/utils/ui'
+require_relative 'lib/utils/text_box'
+require_relative 'lib/utils/seek_bar'
 # require_relative 'lib/map'
 require_relative 'lib/player'
 require_relative 'lib/player_setting'
@@ -51,7 +48,6 @@ require_relative 'lib/scenes/menu'
 require_relative 'lib/scenes/game_over'
 require_relative 'lib/scenes/ranking'
 
-BGM.new
 Debugger.new
 
 SceneManager.new({

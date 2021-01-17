@@ -1,5 +1,5 @@
 class Player < Sprite
-  attr_accessor :spell, :max_life, :life, :images, :direction
+  attr_accessor :spell, :max_life, :life, :images, :direction, :level, :exp
 
   def initialize(spell, x, y, images)
     super
@@ -8,6 +8,7 @@ class Player < Sprite
     @images = images
     self.image = @images[0][0]
     self.collision = [8, 36, 70, 112]
+    
     @spell = spell.to_sym
     @spell_list = [:fire, :water, :wind, :holy, :dark]
     @spell_num = @spell_list.index(@spell)
@@ -15,6 +16,8 @@ class Player < Sprite
     @has_spell[@spell] = true
     @max_life = 250
     @life = 250
+    @level = 1
+    @exp = 0
     @speed = 4
     @direction = 0 # キャラクターの向いている方向 (画像の角度ではない)
     @cool_time = 0
