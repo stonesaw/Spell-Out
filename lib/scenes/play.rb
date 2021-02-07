@@ -25,7 +25,8 @@ class Play < Scene
 
   class << self
     def set_music
-      BGM.set_start_time
+      BGM.init
+      SE.init
     end
 
     def update

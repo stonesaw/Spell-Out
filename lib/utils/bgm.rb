@@ -13,6 +13,11 @@ class BGM
     attr_reader :list, :start_time, :volume
     attr_accessor :now
 
+    def init
+      @start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+      @list[@now][0].set_volume(96 + (@list[@now][2] - 96) * @volume)
+    end
+
     def update
       @list[@now][0].stop unless @play_scene.include?(SceneManager.now)
       # bgm loop
@@ -24,10 +29,7 @@ class BGM
       end
       @blank = [0, @blank - 1].max
     end
-
-    def set_start_time
-      @start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-    end
+    
 
     def volume=(volume)
       @volume = volume

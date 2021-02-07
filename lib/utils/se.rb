@@ -10,9 +10,16 @@ class SE
   class << self
     attr_reader :volume#, :list
 
+    def init
+      @list.each do |key, value|
+        @list[key][0].set_volume(96 + (@list[key][1] - 96) * @volume)
+      end
+    end
+
     def play(symbol)
       @list[symbol][0].play
     end
+    
     
     def volume=(volume)
       @volume = volume
