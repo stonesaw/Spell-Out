@@ -1,20 +1,20 @@
 class SeekBar < Sprite
   attr_accessor :bar_image, :toggle_image, :percent, :pushed
 
-  # arg: option
-  # - percent: 1,
-  # - enable_key_input: true,
-  # - pushed_toggle_scale: 0.8
-  def initialize(x, y, bar_image, toggle_image, **option)
+  def initialize(x, y, bar_image, toggle_image, percent: 1,
+                                                enable_key_input: true,
+                                                pushed_toggle_scale: 0.8
+    )
+
     super
     self.x = x
     self.y = y
     @bar_image    = bar_image
     @toggle_image = toggle_image
-    # option
-    @percent = option[:percent] || 1
-    @enable_key_input = option[:enable_key_input] || true,
-    @pushed_toggle_scale = option[:pushed_toggle_scale] || 0.8
+
+    @percent = percent
+    @enable_key_input = enable_key_input
+    @pushed_toggle_scale = pushed_toggle_scale
 
     @pushed = false
   end
