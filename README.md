@@ -32,3 +32,11 @@
     [尾羽の小屋様](http://obane.tuzikaze.com/)
 - フォント  
     [jeti様](https://fontmeme.com/jfont/poco-font/)
+    
+
+## Useful Links
+- vscode ext  
+  Project Links (https://marketplace.visualstudio.com/items?itemName=KyleDavidE.vscode-project-links)  
+  endwise (https://marketplace.visualstudio.com/items?itemName=kaiwood.endwise)  
+  Ruby Solargraph (https://marketplace.visualstudio.com/items?itemName=castwide.solargraph)  
+- DXRuby API Reference (http://mirichi.github.io/dxruby-doc/api/index.html)  
