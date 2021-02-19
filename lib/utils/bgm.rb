@@ -12,29 +12,28 @@ class BGM
   class << self
     attr_reader :list, :start_time, :volume
     attr_accessor :now
+  end
 
-    def init
-      @start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-      @list[@now][0].set_volume(96 + (@list[@now][2] - 96) * @volume)
-    end
+  def self.init
+    @start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+    @list[@now][0].set_volume(96 + (@list[@now][2] - 96) * @volume)
+  end
 
-    def update
-      @list[@now][0].stop unless @play_scene.include?(SceneManager.now)
-      # bgm loop
-      bgm_end = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-      diff = (bgm_end - @start_time).floor(1)
-      if @blank <= 0 && (diff % (@list[@now][1] - 0.5)) == 0
-        @list[@now][0].play
-        @blank = 60
-      end
-      @blank = [0, @blank - 1].max
+  def self.update
+    @list[@now][0].stop unless @play_scene.include?(SceneManager.now)
+    # bgm loop
+    bgm_end = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+    diff = (bgm_end - @start_time).floor(1)
+    if @blank <= 0 && (diff % (@list[@now][1] - 0.5)) == 0
+      @list[@now][0].play
+      @blank = 60
     end
-    
+    @blank = [0, @blank - 1].max
+  end
 
-    def volume=(volume)
-      @volume = volume
-      @list[@now][0].set_volume(96 + (@list[@now][2] - 96) * @volume)
-    end
+  def self.volume=(volume)
+    @volume = volume
+    @list[@now][0].set_volume(96 + (@list[@now][2] - 96) * @volume)
   end
 end
 

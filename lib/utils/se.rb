@@ -8,24 +8,24 @@ class SE
   @volume = 1
 
   class << self
-    attr_reader :volume#, :list
+    attr_reader :volume, :list
+  end
 
-    def init
-      @list.each do |key, value|
-        @list[key][0].set_volume(96 + (@list[key][1] - 96) * @volume)
-      end
+  def self.init
+    @list.values.each do |sound|
+      sound[0].set_volume(96 + (sound[1] - 96) * @volume)
     end
+  end
 
-    def play(symbol)
-      @list[symbol][0].play
-    end
-    
-    
-    def volume=(volume)
-      @volume = volume
-      @list.each do |key, value|
-        @list[key][0].set_volume(96 + (@list[key][1] - 96) * @volume)
-      end
+  def self.play(symbol)
+    @list[symbol][0].play
+  end
+
+  
+  def self.volume=(volume)
+    @volume = volume
+    @list.values.each do |sound|
+      sound[0].set_volume(96 + (sound[1] - 96) * @volume)
     end
   end
 end

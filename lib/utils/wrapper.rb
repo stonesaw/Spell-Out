@@ -1,32 +1,23 @@
 # Wrapping `Input.mouse_x`, `Input.mouse_y` and `Input.mouse_enable`
 # And Update the mouse display when the keyboard is pressed
 class Mouse
+  @x = nil
+  @y = nil
+  @is_draw = true
+
   class << self
-    @@x = nil
-    @@y = nil
+    attr_reader :x, :y, :is_draw
+  end
 
-    def update
-      @@old_x = @@x
-      @@old_y = @@y
-      @@x = Input.mouse_x / Window.scale
-      @@y = Input.mouse_y / Window.scale
+  def self.update
+    @old_x = @x
+    @old_y = @y
+    @x = Input.mouse_x / Window.scale
+    @y = Input.mouse_y / Window.scale
 
-      @@is_draw = false unless Input.keys.empty?
-      @@is_draw = true unless @@old_x == @@x && @@old_y == @@y
-      Input.mouse_enable = @@is_draw
-    end
-
-    def x
-      @@x
-    end
-
-    def y
-      @@y
-    end
-
-    def is_draw
-      @@is_draw
-    end
+    @is_draw = false unless Input.keys.empty?
+    @is_draw = true if !(@old_x == @x && @old_y == @y)
+    Input.mouse_enable = @is_draw
   end
 end
 

@@ -1,11 +1,10 @@
 class ScrollablePage < RenderTarget
   attr_reader :pos
 
-  def initialize(width, height, 
-                 page_width=nil, page_height=nil, bgcolor=[0, 0, 0, 0], 
+  def initialize(width, height, bgcolor = [0, 0, 0, 0],
+                 page_width: nil, page_height: nil,
                  scrollbar: nil, scrollbar_base: nil,
-                 bar_w: 16, bar_color: [200, 200, 200], bar_base_color: C_WHITE
-                )
+                 bar_w: 16, bar_color: [200, 200, 200], bar_base_color: C_WHITE)
     super(width, height, bgcolor)
     @page_width = page_width || self.width
     @page_height = page_height || self.height
@@ -13,14 +12,14 @@ class ScrollablePage < RenderTarget
     @bar_h_per = [self.height.to_f / @page_height, 1].min
     @scrollbar = scrollbar || Image.new(bar_w, (self.height * @bar_h_per).to_i, bar_color)
     @scrollbar_base = scrollbar_base || Image.new(bar_w, self.height, bar_base_color)
-    
+
     @pos = 0
     @_before_mouse_wheel = Input.mouse_wheel_pos
   end
 
   def draw_scrollbar
-    self.draw(self.width - @scrollbar_base.width, @pos, @scrollbar_base)
-    self.draw(self.width - @scrollbar.width, @pos * @bar_h_per + @pos, @scrollbar)
+    draw(width - @scrollbar_base.width, @pos, @scrollbar_base)
+    draw(width - @scrollbar.width, @pos * @bar_h_per + @pos, @scrollbar)
   end
 
   def update
@@ -29,7 +28,7 @@ class ScrollablePage < RenderTarget
     @_before_mouse_wheel = Input.mouse_wheel_pos
 
     @pos += scroll_volume
-    @pos = [0, [@pos, @page_height - self.height].min].max
+    @pos = [0, [@pos, @page_height - height].min].max
   end
 
   # wrapping methods
@@ -51,16 +50,16 @@ class ScrollablePage < RenderTarget
     'draw_box(x1, y1, x2, y2, color, z=0)',
     'draw_box_fill(x1, y1, x2, y2, color, z=0)',
     'draw_circle(x, y, r, color, z=0)',
-    'draw_circle_fill(x, y, r, color, z=0)'
+    'draw_circle_fill(x, y, r, color, z=0)',
   ].each do |method|
     match = method.match(/^(\w*)\((.+)\)$/)
     name = match[1]
     arg = match[2]
     # puts "#{name}(#{arg})"
-    new_arg = arg
-      .gsub(/(\w+)\s*=.+?,/, "\\1,")
-      .sub(/(\w+)\s*=.+?$/, "\\1")
-      .gsub(/(x|x\d), (y|y\d),/, "\\1, \\2 - @pos,")
+    new_arg = arg.
+      gsub(/(\w+)\s*=.+?,/, '\\1,').
+      sub(/(\w+)\s*=.+?$/, '\\1').
+      gsub(/(x|x\d), (y|y\d),/, '\\1, \\2 - @pos,')
     # puts "#{' ' * (name.length - 2)}=> #{new_arg}"
     eval "def #{name}(#{arg})
             super(#{new_arg})
