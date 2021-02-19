@@ -19,7 +19,6 @@ class Player < Sprite
     @speed = 4
     @direction = 0 # キャラクターの向いている方向 (画像の角度ではない)
     @cool_time = 0
-    # @@se_bullet = Sound.new("#{$PATH}/assets/sound/se_retro03.wav")
 
     @bullet_count = 0
     @anime_count = 0
@@ -130,7 +129,6 @@ class Player < Sprite
   private
 
   def _fire_bullet(tick, level = 1)
-    # @@se_bullet.play
     if level == 1
       _x = self.x + (image.width * 0.5)  + image.width  * 0.4 * Math.cos(@direction * Math::PI / 180.0)
       _y = self.y + (image.height * 0.6) + image.height * 0.4 * Math.sin(@direction * Math::PI / 180.0)

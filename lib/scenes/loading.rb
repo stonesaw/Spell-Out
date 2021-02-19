@@ -4,9 +4,7 @@
 class Loading < Scene
   @font = Font.new(32)
 
-  class << self
-    def draw
-      Window.draw_font(0, 0, 'Loading', @font)
-    end
+  def self.draw
+    Window.draw_font(0, 0, 'Loading', @font)
   end
 end

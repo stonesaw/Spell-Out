@@ -17,15 +17,15 @@ class TextBox
     @moji =   Sprite.new(@x + @width * 0.03 + font_ox, @y + @height * 0.1 + font_oy, Image.new(@width * 0.94, @height * 0.8).draw_font(0, 0, @string, @font, @font_color))
     @cursor = Sprite.new(@x + @width * 0.03, @y + @height * 0.1, Image.new(1, @font_size * cursor_scale, @frame_color))
     @is_choose = true
-    @@tick = 0
-    @@alphabet = ('a'..'z').to_a
-    @@flash_rate = 60
+    @tick = 0
+    @alphabet = ('a'..'z').to_a
+    @flash_rate = 60
   end
 
   def update
     return nil unless @is_choose
 
-    @@tick += 1
+    @tick += 1
     typing
     @font_w = @font.get_width(@string)
     if @font_w > @moji.image.width
@@ -41,25 +41,25 @@ class TextBox
   def draw
     @frame.draw
     @moji.draw
-    @cursor.draw if @is_choose && (@@tick % @@flash_rate * 2 < @@flash_rate)
+    @cursor.draw if @is_choose && (@tick % @flash_rate * 2 < @flash_rate)
   end
 
   private
 
   def typing
     26.times do |i|
-      next unless Input.key_push?(eval('K_' + @@alphabet[i].upcase))
+      next unless Input.key_push?(eval("K_#{@alphabet[i].upcase}"))
 
-      @string += @@alphabet[i].upcase
+      @string += @alphabet[i].upcase
 
       # choose upcase or down case cf. pushig shift key
       # if Input.key_down?(K_LSHIFT) || Input.key_down?(K_RSHIFT)
-      #   @string += @@alphabet[i].upcase
+      #   @string += @alphabet[i].upcase
       # else
-      #   @string += @@alphabet[i]
+      #   @string += @alphabet[i]
       # end
     end
-    @string += ' ' if Input.key_push?(K_SPACE) || Input.key_down?(K_SPACE) && @@tick % 6 == 0
-    @string[-1] = '' if @string.length > 0 && (Input.key_push?(K_BACK) || Input.key_down?(K_BACK) && @@tick % 6 == 0)
+    @string += ' ' if Input.key_push?(K_SPACE) || Input.key_down?(K_SPACE) && @tick % 6 == 0
+    @string[-1] = '' if @string.length > 0 && (Input.key_push?(K_BACK) || Input.key_down?(K_BACK) && @tick % 6 == 0)
   end
 end

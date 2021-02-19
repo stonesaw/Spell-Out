@@ -19,32 +19,46 @@ class Debugger
 
   class << self
     attr_accessor :font, :color, :ox, :oy, :_str, :_list
+  end
 
-    def print(str)
-      @_str += str.to_s
-      self
+  def print(str)
+    @_str += str.to_s
+    self
+  end
+
+  def self.puts(str)
+    @_str += [str.to_s.chomp, "\n"].join
+    self
+  end
+
+  def self.draw_msg
+    @_str.split(/\R/).each_with_index do |msg, i|
+      Window.draw_font(@ox, @oy + @font.size * i, msg, @font, color: @color)
     end
+    @_str = ''
+  end
 
-    def puts(str)
-      @_str += [str.to_s.chomp, "\n"].join
-      self
+  def self.add_block(&block)
+    @_list << block
+    self
+  end
+
+  def self.block_call
+    @_list.each { |l| l.call }
+    @_list = []
+  end
+
+  # TODO
+  # draw_hit_box(Sprite | [Sprite])
+  def self.draw_hit_box(sprite)
+    if sprite.class == Sprite
+      sprite = [sprite]
+    elsif sprite.class == Array
+    else
+      raise ArgumentError, "please (Sprite or [Sprite])"
     end
-
-    def draw_msg
-      @_str.split(/\R/).each_with_index do |msg, i|
-        Window.draw_font(@ox, @oy + @font.size * i, msg, @font, color: @color)
-      end
-      @_str = ''
-    end
-
-    def add_block(&block)
-      @_list << block
-      self
-    end
-
-    def block_call
-      @_list.each { |l| l.call }
-      @_list = []
+    sprite.each do |s|
+      # TODO
     end
   end
 end

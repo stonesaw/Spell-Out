@@ -81,6 +81,15 @@ class BulletData
     end
   end
 
+  def self.spell_and_color
+    {
+      fire: [255, 0, 0],
+      water: [55, 183, 230],
+      wind: [23, 255, 123],
+      holy: [249, 250, 212],
+      dark: [121, 73, 173],
+    }
+  end
 
   private
   def self._list_add_level1_bullet
@@ -94,16 +103,5 @@ class BulletData
         bullet.y += bullet.data.var[:speed] * Math.sin(bullet.direction * Math::PI / 180.0)
       end
     end
-  end
-
-  public
-  def self.spell_and_color
-    {
-      fire: [255, 0, 0],
-      water: [55, 183, 230],
-      wind: [23, 255, 123],
-      holy: [249, 250, 212],
-      dark: [121, 73, 173],
-    }
   end
 end
