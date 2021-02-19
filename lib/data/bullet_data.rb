@@ -25,8 +25,8 @@ class BulletData
     attr_reader :list, :charge_tick
   end
 
-  def initialize
-    self.class._list_add_level1_bullet
+  def self.new
+    _list_add_level1_bullet
 
     fire_img = []
     2.times do |i|
@@ -34,8 +34,9 @@ class BulletData
         .set_color_key(C_WHITE)
     end
 
-    BulletData.list[:level2_fire] = IBulletData.new(:fire, 50, fire_img[0], anime: fire_img)
-    .when_spawned do |bullet, tick, player|
+    BulletData.list[:level2_fire] = IBulletData.new(
+      :fire, 50, fire_img[0], anime: fire_img
+    ).when_spawned do |bullet, tick, player|
       bullet.center_x = 64
       bullet.center_y = 128
     end
@@ -58,8 +59,9 @@ class BulletData
         set_color_key(C_WHITE)
     end
 
-    BulletData.list[:level2_wind] = IBulletData.new(:wind, 0, wind_img[0], anime: wind_img, is_draw_after: true)
-    .when_spawned do |bullet, tick, player|
+    BulletData.list[:level2_wind] = IBulletData.new(
+      :wind, 0, wind_img[0], anime: wind_img, is_draw_after: true
+    ).when_spawned do |bullet, tick, player|
       player.life = [player.life + 10, player.max_life].min
       bullet.collision_enable = false # 当たり判定をなくす
     end
@@ -91,7 +93,7 @@ class BulletData
     }
   end
 
-  private
+
   def self._list_add_level1_bullet
     spell_and_color.each_pair do |key, value|
       list[:"level1_#{key}"] = IBulletData.new(key, 10, Image.new(10, 10, value))
@@ -104,4 +106,5 @@ class BulletData
       end
     end
   end
+  private_class_method :_list_add_level1_bullet
 end

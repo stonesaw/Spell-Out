@@ -49,9 +49,12 @@ class Ranking < Scene
       name_img =  Image.new(w[0], @font_big.size   * 0.8).draw_font(10, -30, name.to_s, @font_big)
       score_img = Image.new(w[1], @font_nomal.size * 0.8).draw_font(10, -20, score.to_s, @font_nomal)
       time_img =  Image.new(w[2], @font_mini.size).draw_font(10, -10, time.to_s, @font_mini, [240, 240, 240])
-      @table << Sprite.new(240,           220 + i * @font_big.size * 0.9, name_img)
-      @table << Sprite.new(260 + name_s,  220 + i * @font_big.size * 0.9 + name_img.height - score_img.height - 10, score_img)
-      @table << Sprite.new(280 + score_s, 220 + i * @font_big.size * 0.9 + name_img.height - time_img.height - 10, time_img)
+      name_h = 220 + i * @font_big.size * 0.9
+      score_h = 220 + i * @font_big.size * 0.9 + name_img.height - score_img.height - 10
+      time_h = 220 + i * @font_big.size * 0.9 + name_img.height - time_img.height - 10
+      @table << Sprite.new(240,           name_h,  name_img)
+      @table << Sprite.new(260 + name_s,  score_h, score_img)
+      @table << Sprite.new(280 + score_s, time_h,  time_img)
     end
   end
 

@@ -105,13 +105,14 @@ class Player < Sprite
         @bullet_count = 0
         _fire_bullet(tick)
       end
-      if !Input.mouse_down?(1) && (PlayerSetting.auto_attack || Input.key_down?(K_SPACE) || Input.mouse_down?(0))
+      if !Input.mouse_down?(1) &&
+        (PlayerSetting.auto_attack || Input.key_down?(K_SPACE) || Input.mouse_down?(0))
         @bullet_count += 1
         _fire_bullet(tick) if @bullet_count % 14 == 0
       end
 
       if @charge_percent >= 1.0 && Input.mouse_release?(1)
-        _fire_bullet(tick, 2)
+        _fire_bullet(tick, level: 2)
         @_mouse_down_count = 0
       end
 
@@ -125,25 +126,6 @@ class Player < Sprite
       @charge_percent = @_mouse_down_count.to_f / BulletData.charge_tick[@spell]
     end
   end
-
-  private
-
-  def _fire_bullet(tick, level = 1)
-    if level == 1
-      _x = self.x + (image.width * 0.5)  + image.width  * 0.4 * Math.cos(@direction * Math::PI / 180.0)
-      _y = self.y + (image.height * 0.6) + image.height * 0.4 * Math.sin(@direction * Math::PI / 180.0)
-      Bullet.new(self, BulletData.list[:"level1_#{@spell}"], tick, _x, _y, @direction)
-    elsif level == 2
-      bullet_name = :"level2_#{@spell}"
-      unless BulletData.list.keys.include?(bullet_name)
-        raise NameError, "BulletData.list undefined :#{bullet_name}"
-      end
-      Bullet.new(self, BulletData.list[bullet_name], tick, nil, nil, @direction)
-      @cool_time = 100
-    end
-  end
-
-  public
 
   def draw
     if $debug_mode # キャラの当たり判定の範囲
@@ -165,4 +147,21 @@ class Player < Sprite
     _y = self.y + 10
     Window.draw(_x, _y, @charge_circle_img[(@charge_percent * 8).to_i])
   end
+
+  private def _fire_bullet(tick, level: 1)
+    if level == 1
+      _x = self.x + (image.width * 0.5)  + image.width  * 0.4 * Math.cos(@direction * Math::PI / 180.0)
+      _y = self.y + (image.height * 0.6) + image.height * 0.4 * Math.sin(@direction * Math::PI / 180.0)
+      Bullet.new(self, BulletData.list[:"level1_#{@spell}"], tick, _x, _y, @direction)
+    elsif level == 2
+      bullet_name = :"level2_#{@spell}"
+      unless BulletData.list.keys.include?(bullet_name)
+        raise NameError, "BulletData.list undefined :#{bullet_name}"
+      end
+      Bullet.new(self, BulletData.list[bullet_name], tick, nil, nil, @direction)
+      @cool_time = 100
+    end
+  end
+
+
 end

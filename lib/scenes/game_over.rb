@@ -44,12 +44,27 @@ class GameOver < Scene
   def self.draw
     if @symbol == :game_clear
       @title_width = @font_big.get_width('Game Clear')
-      Window.draw_font((Window.width - @title_width) / 2, (Window.height - @font_big.size) * 0.3, 'Game Clear', @font_big)
+      Window.draw_font(
+        (Window.width - @title_width) / 2,
+        (Window.height - @font_big.size) * 0.3,
+        'Game Clear',
+        @font_big
+      )
     else
-      Window.draw_font((Window.width - @title_width) / 2, (Window.height - @font_big.size) * 0.3, 'Game Over', @font_big)
+      Window.draw_font(
+        (Window.width - @title_width) / 2,
+        (Window.height - @font_big.size) * 0.3,
+        'Game Over',
+        @font_big
+      )
     end
     score_width = @score_is + @font_nomal.get_width('0') * $score.to_s.length
-    Window.draw_font((Window.width - score_width) / 2, (Window.height - @font_nomal.size) * 0.4, ['score : ', $score].join, @font_nomal)
+    Window.draw_font(
+      (Window.width - score_width) / 2,
+      (Window.height - @font_nomal.size) * 0.4,
+      "score : #{$score}",
+      @font_nomal
+    )
     @tb.draw
 
     # draw alerts

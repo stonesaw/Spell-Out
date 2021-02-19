@@ -48,7 +48,7 @@ require_relative 'lib/scenes/menu'
 require_relative 'lib/scenes/game_over'
 require_relative 'lib/scenes/ranking'
 
-Debugger.new(48)
+Debugger.new(font_size: 48)
 
 SceneManager.new({
   title: Title,

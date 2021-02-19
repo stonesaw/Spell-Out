@@ -1,7 +1,7 @@
 class ScrollablePage < RenderTarget
   attr_reader :pos
 
-  def initialize(width, height, bgcolor = [0, 0, 0, 0],
+  def initialize(width, height, bgcolor: [0, 0, 0, 0],
                  page_width: nil, page_height: nil,
                  scrollbar: nil, scrollbar_base: nil,
                  bar_w: 16, bar_color: [200, 200, 200], bar_base_color: C_WHITE)

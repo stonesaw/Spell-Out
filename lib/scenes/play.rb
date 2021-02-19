@@ -9,7 +9,11 @@ class Play < Scene
     @spell_icon = Sprite.new(1000, 600, Image.new(64, 64, C_WHITE))
     # @heart_icon = Image.load("#{$PATH}/assets/image/icon_Heart.png")
 
-    @player = Player.new(:fire, (Window.width - $player_images[0][0].width) * 0.5, Window.height * 0.7, $player_images)
+    @player = Player.new(
+      :fire,
+      (Window.width - $player_images[0][0].width) * 0.5, Window.height * 0.7,
+      $player_images
+    )
     r = $player_images[0][0].width / 2
     Input.set_mouse_pos(@player.x * Window.scale + r, @player.y * Window.scale + r)
     Bullet.reset
@@ -89,9 +93,13 @@ class Play < Scene
     else
       Window.draw_font(0, 0, @player.life.to_s, @font, color: [70, 130, 180]) # blue
     end
-    Window.draw_font(Window.width - w - 40, -10, ['SCORE : ', $score].join, @font)
-    Window.draw_font(Window.width - 200, Window.height - 60, ['<FPS : ', Window.real_fps, '>'].join, @font_mini, color: [230, 230, 230])
-    Window.draw_font(Window.width - w - 40, 30, ['LEVEL: ', @player.level].join, @font)
+    Window.draw_font(Window.width - w - 40, -10, "SCORE : #{$score}", @font)
+    Window.draw_font(
+      Window.width - 200, Window.height - 60,
+      "<FPS : #{Window.real_fps}>", @font_mini,
+      color: [230, 230, 230]
+    )
+    Window.draw_font(Window.width - w - 40, 30, "LEVEL: #{@player.level}", @font)
   end
 
   def self.last

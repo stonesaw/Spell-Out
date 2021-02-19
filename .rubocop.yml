@@ -1,50 +1,63 @@
-AllCops:
-  TargetRubyVersion: 2.6
+inherit_from:
+  - .rubocop_todo.yml
+  - .rubocop_airbnb.yml
 
 
-# 日本語のコメントを許可
-Style/AsciiComments:
-  Enabled: false
-# ドキュメントの無いパブリッククラスを許可する
-Style/Documentation:
+Rails:
   Enabled: false
 
-Style/FrozenStringLiteralComment:
-  Enabled: false
+LineLength:
+  Max: 110
 
-# %w() と %i() が見分けづらいので Style/WordArray と合わせて無効に。
-# 書き手に委ねるという意味で、Enabled: false にしています。使っても良い。
-Style/SymbolArray:
-  Enabled: false
-# %w() と %i() が見分けづらいので Style/SymbolArray と合わせて無効に。
-# 書き手に委ねるという意味で、Enabled: false にしています。使っても良い。
-Style/WordArray:
-  Enabled: false
-# foo.positive? は foo > 0 に比べて意味が曖昧になる
-# foo.zero? は許可したいけどメソッドごとに指定できないので一括で disable に
-Style/NumericPredicate:
-  Enabled: false
-
-Layout/FirstHashElementIndentation:
-  Enabled: false
-# メソッドチェーン感がより感じられるインデントにする
-Layout/MultilineMethodCallIndentation:
-  EnforcedStyle: indented_relative_to_receiver
-
+# {} は 1 行で書くときに主に使われるので、スペースよりも
+# 横に長くならない方が嬉しさが多い。
+# そもそも {| のスタイルの方が一般的だったと認識している。
 Layout/SpaceInsideBlockBraces:
   SpaceBeforeBlockParameters: false
 
+# ドットの位置をメソッド名と同じ行にする
+DotPosition:
+  EnforcedStyle: leading
 
-Lint/UnderscorePrefixedVariableName:
-  Enabled: false
+
+# -------- old rubocop.yml --------
+
+# # 日本語のコメントを許可
+# Style/AsciiComments:
+#   Enabled: false
+# # ドキュメントの無いパブリッククラスを許可する
+# Style/Documentation:
+#   Enabled: false
+
+# Style/FrozenStringLiteralComment:
+#   Enabled: false
+
+# # %w() と %i() が見分けづらいので Style/WordArray と合わせて無効に。
+# # 書き手に委ねるという意味で、Enabled: false にしています。使っても良い。
+# Style/SymbolArray:
+#   Enabled: false
+# # %w() と %i() が見分けづらいので Style/SymbolArray と合わせて無効に。
+# # 書き手に委ねるという意味で、Enabled: false にしています。使っても良い。
+# Style/WordArray:
+#   Enabled: false
+# # foo.positive? は foo > 0 に比べて意味が曖昧になる
+# # foo.zero? は許可したいけどメソッドごとに指定できないので一括で disable に
+# Style/NumericPredicate:
+#   Enabled: false
+
+# Layout/FirstHashElementIndentation:
+#   Enabled: false
+# # メソッドチェーン感がより感じられるインデントにする
+# Layout/MultilineMethodCallIndentation:
+#   EnforcedStyle: indented_relative_to_receiver
+
+# Layout/SpaceInsideBlockBraces:
+#   SpaceBeforeBlockParameters: false
 
 
-Metrics/MethodLength:
-  Max: 20
+# Lint/UnderscorePrefixedVariableName:
+#   Enabled: false
 
-GlobalVars:
-  AllowedVariables: [
-    $PATH,
-    $debug_mode,
-    $player_images
-  ]
+
+# Metrics/MethodLength:
+#   Max: 40

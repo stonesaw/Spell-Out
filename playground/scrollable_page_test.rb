@@ -3,14 +3,14 @@ require_relative '../lib/utils/scrollable_page'
 
 Font.install('MonospaceBold.ttf')
 
-page = ScrollablePage.new(500, 400, [34, 34, 34], page_height: 800)
+page = ScrollablePage.new(500, 400, bgcolor: [34, 34, 34], page_height: 800)
 
 font = Font.new(24)
 font_code = Font.new(21, 'Monospace')
 
 usage = "
 page = ScrollablePage.new(
-  500, 400, [34, 34, 34], page_height: 800
+  500, 400, bgcolor: [34, 34, 34], page_height: 800
 )
 
 a = Sprite.new(100, 0, Image.new(50, 50, C_RED))

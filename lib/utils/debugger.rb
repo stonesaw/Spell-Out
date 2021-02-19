@@ -8,7 +8,8 @@ class Debugger
   @_str = ''
   @_list = []
 
-  def initialize(font_size = 24, font_name = '', option = {}, color: C_WHITE, ox: 10, oy: 10)
+  def initialize(font_size: 24, font_name: '', option: {},
+                 color: C_WHITE, ox: 10, oy: 10)
     self.class.font = Font.new(font_size, font_name, option)
     self.class.color = color
     self.class.ox = ox
@@ -44,7 +45,7 @@ class Debugger
   end
 
   def self.block_call
-    @_list.each { |l| l.call }
+    @_list.each {|l| l.call }
     @_list = []
   end
 

@@ -57,7 +57,9 @@ class Title < Scene
     @cursor += 1 if Input.key_push?(K_DOWN)
     @cursor -= 1 if Input.key_push?(K_UP)
     @cursor = [[0, @cursor].max, 2].min if @cursor != -99
-    @cursor = -99 if @section_play.on_mouse? || @section_credit.on_mouse? || @section_exit.on_mouse?
+    if @section_play.on_mouse? || @section_credit.on_mouse? || @section_exit.on_mouse?
+      @cursor = -99
+    end
 
     if Input.mouse_down?(0) || Input.key_down?(K_RETURN) || Input.pad_down?(P_BUTTON0)
       if @section_play.on_mouse? || @cursor == 0
@@ -121,7 +123,6 @@ class Title < Scene
     @bgm.dispose
   end
 
-  private
 
   def self._draw_section(sp, cursor, section_name)
     args = sp.x + 10, sp.y - 60, section_name.upcase, @font
@@ -133,6 +134,7 @@ class Title < Scene
       Window.draw_font(*args, color: [200, 255, 255, 255])
     end
   end
+  private_class_method :_draw_section
 
   def self._draw_mini_char_field
     @mini_field_top.draw
@@ -145,4 +147,5 @@ class Title < Scene
       Window.draw_morph(x + 30, base_y, x, base_y + h, x + w, base_y + h, x + w + 30, base_y, @mini_field_img)
     end
   end
+  private_class_method :_draw_mini_char_field
 end
