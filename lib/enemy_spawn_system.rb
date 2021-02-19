@@ -9,8 +9,8 @@ class EnemySpawnSystem
   end
 
   class << self
-    def update(tick)
-      # TODO スライムは画面の上下左右の端からランダムで出現
+    def update(tick, player)
+      # TODO: スライムは画面の上下左右の端からランダムで出現
       if tick % 160 == 0 && !@@is_boss && tick < @@boss_spawn_ticks
         if @@enemy_count <= 0
           @@enemy_count = rand(2..6)
@@ -18,10 +18,10 @@ class EnemySpawnSystem
           @@slime = EnemiesData.list["slime#{@@slime_count % 2 + 1}".to_sym]
         end
 
-        case(rand(3))
+        case rand(3)
         when 1
           _y = 100 + rand(Window.height - @@slime.image.height - 100)
-          _x = -@@slime.image.width - rand(200)       
+          _x = -@@slime.image.width - rand(200)
         when 2
           _x = 100 + rand(Window.width - @@slime.image.width - 100)
           _y = -@@slime.image.height - rand(200)
@@ -32,18 +32,18 @@ class EnemySpawnSystem
           _y = 100 + rand(Window.height - @@slime.image.height - 100)
           _x = -@@slime.image.width - rand(200)
         end
-        Enemy.new(@@slime, tick, _x, _y).add_hp_bar(x: 0.7, y: 0.7)
+        Enemy.new(@@slime, tick, _x, _y, player)
         @@enemy_count -= 1
       end
-      
+
       if tick >= @@boss_spawn_ticks
-        Enemies.list.clear if !@@is_boss
+        Enemy.list.clear unless @@is_boss
         @@is_boss = true
         _x = 100 + rand(Window.width - EnemiesData.list[:golem].image.width - 100)
         _y = -EnemiesData.list[:golem].image.height - rand(200)
         if tick % 200 == 0 && @@boss_count < 3
           @@boss_count += 1
-          Enemy.new(EnemiesData.list[:golem], tick, _x, _y).add_hp_bar
+          Enemy.new(EnemiesData.list[:golem], tick, _x, _y, player)
         end
       end
     end

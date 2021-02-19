@@ -8,12 +8,12 @@ class Play < Scene
     @@font_mini = Font.new(50, 'Poco')
     @@spell_icon = Sprite.new(1000, 600, Image.new(64, 64, C_WHITE))
     # @@heart_icon = Image.load("#{$PATH}/assets/image/icon_Heart.png")
-    
+
     @@player = Player.new(:fire, (Window.width - $player_images[0][0].width) * 0.5, Window.height * 0.7, $player_images)
     r = $player_images[0][0].width / 2
     Input.set_mouse_pos(@@player.x * Window.scale + r, @@player.y * Window.scale + r)
     Bullet.reset
-    Enemies.reset
+    Enemy.reset
     EnemiesData.new
     BulletData.new
     EnemySpawnSystem.new
@@ -38,56 +38,61 @@ class Play < Scene
       SceneManager.next(:menu) if Input.key_release?(K_TAB)
 
       # spown enemy
-      EnemySpawnSystem.update(@@tick)
-      
-
-      # if @@tick > @@boss_spawn_ticks && Enemies.list.length == 0
-      #   x = (Window.width - EnemiesData.slime.image.width) / 2
-      #   Enemy.new(EnemiesData.big_slime, @@tick, x, 0).add_boss_bar
-      # end
+      EnemySpawnSystem.update(@@tick, @@player)
 
       # update
       @@player.update(@@tick)
 
-      _to_scene_game_over() if @@player.life <= 0
-      _to_scene_game_clear() if EnemySpawnSystem.is_boss? && Enemies.list.empty?
-      
+      _to_scene_game_over if @@player.life <= 0
+      if EnemySpawnSystem.is_boss? && Enemy.list.empty?
+        _to_scene_game_clear
+      end
+
       Bullet.update(@@tick, @@player)
-      Enemies.update(:any, @@tick, @@player)
+      # Enemies.update(:any, @@tick, @@player)
+      i = -1
+      Enemy.list.length.times do
+        enemy = Enemy.list[i]
+        enemy.update(enemy, @@tick, @@player)
+        i -= 1
+      end
+      Sprite.clean(Enemy.list)
+
       @@tick += 1
     end
 
     def draw
-      Debugger.puts ['fps : ', Window.real_fps].join
-      Debugger.puts ['tick : ', @@tick].join
-      Debugger.puts ['score : ', $score].join
-      Debugger.puts ['my life : ', @@player.life].join
-      Debugger.puts ['player direction : ', @@player.direction.to_i].join
-      Debugger.puts ['bullet : ', Bullet.list.length].join
-      Debugger.puts ['enemy : ', Enemies.list.length].join
+      Debugger.puts("fps : #{Window.real_fps}")
+      Debugger.puts("tick : #{@@tick}")
+      Debugger.puts("score : #{$score}")
+      Debugger.puts("my life : #{@@player.life}")
+      Debugger.puts("player direction : #{@@player.direction.to_i}")
+      Debugger.puts("bullet : #{Bullet.list.length}")
+      Debugger.puts("enemy : #{Enemy.list.length}")
 
       # @@bg.draw
       Bullet.draw
-      Enemies.draw
+      Sprite.draw(Enemy.list)
+      # Enemies.draw
       @@player.draw
-      Bullet.draw_wrapper
-      UI.draw
+      Bullet.draw_after
+      HPBar.draw
 
       # @@player.life.times do |i|
       #   Window.draw(14 + i * (@@heart_icon.width + 4), 14, @@heart_icon)
       # end
       w = @@font.get_width(['SCORE : ', $score].join)
-      case(@@player.life)
-      when 0 .. 100
-        Window.draw_font(0,0,@@player.life.to_s, @@font, color: [255, 0, 0]) # red
-      when 101 .. 150
-        Window.draw_font(0,0,@@player.life.to_s, @@font, color: [255, 210, 0]) # orange
+      case @@player.life
+      when 0..100
+        Window.draw_font(0, 0, @@player.life.to_s, @@font, color: [255, 0, 0]) # red
+      when 101..150
+        Window.draw_font(0, 0, @@player.life.to_s, @@font, color: [255, 210, 0]) # orange
       else
-        Window.draw_font(0,0,@@player.life.to_s, @@font, color: [70, 130, 180]) # blue
+        Window.draw_font(0, 0, @@player.life.to_s, @@font, color: [70, 130, 180]) # blue
       end
       Window.draw_font(Window.width - w - 40, -10, ['SCORE : ', $score].join, @@font)
       Window.draw_font(Window.width - 200, Window.height - 60, ['<FPS : ', Window.real_fps, '>'].join, @@font_mini, color: [230, 230, 230])
-      Window.draw_font(Window.width - w -40, 30, ['LEVEL: ', @@player.level].join, @@font)
+      Window.draw_font(Window.width - w - 40, 30, ['LEVEL: ', @@player.level].join, @@font)
     end
 
     def last
@@ -120,7 +125,7 @@ class Play < Scene
         Window.update
         cover.alpha += 15 if i % 60 == 0
         break if cover.alpha > 255
-    
+
         Play.draw
         cover.draw
         i += 1

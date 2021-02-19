@@ -8,12 +8,10 @@ class Player < Sprite
     @images = images
     self.image = @images[0][0]
     self.collision = [8, 36, 70, 112]
-    
+
     @spell = spell.to_sym
     @spell_list = [:fire, :water, :wind, :holy, :dark]
     @spell_num = @spell_list.index(@spell)
-    @has_spell = @spell_list.map {|key| [key, false] }.to_h
-    @has_spell[@spell] = true
     @max_life = 250
     @life = 250
     @level = 1
@@ -32,14 +30,9 @@ class Player < Sprite
     @charge_percent = 0.0
     @charge_circle_img = []
     9.times do |i|
-      @charge_circle_img << Image.load("#{$PATH}/assets/image/circle#{i}.png")
-        .set_color_key(C_BLACK)
-        .flush([200, 255, 255, 255]) # 色を変更
-    end
-
-    @fire_img = []
-    1.times do |i|
-      @fire_img << Image.load("#{$PATH}/assets/image/fire#{i}.png")
+      @charge_circle_img << Image.load("#{$PATH}/assets/image/circle#{i}.png").
+        set_color_key(C_BLACK).
+        flush([200, 255, 255, 255]) # 色を変更
     end
   end
 
@@ -49,7 +42,7 @@ class Player < Sprite
     my = Mouse.y
     ox = x + (image.width / 2)
     oy = y + (image.height / 2)
-    
+
     anime_stop = false
     if (0..10).include?((ox - mx).abs) && (0..10).include?((oy - my).abs)
       anime_stop = true
@@ -57,7 +50,7 @@ class Player < Sprite
       angle = Math.atan2(my - oy, mx - ox) * 180.0 / Math::PI
       angle = 360 + angle if angle < 0
       @direction = angle
-      # obj = Bullet.list + Enemies.list
+      # obj = Bullet.list + Enemy.list
       # obj.each do |o|
       #   o.x -= @speed * Math.cos(@direction * Math::PI / 180.0)
       #   o.y -= @speed * Math.sin(@direction * Math::PI / 180.0)
@@ -73,21 +66,20 @@ class Player < Sprite
 
     # [右 → から時計回り][アニメーション]
     @anime_count += 1 if tick % 10 == 0
-    if anime_stop
-      frame = 1
-    else
-      frame = @anime_count % 3
-    end
+    frame = if anime_stop
+              1
+            else
+              @anime_count % 3
+            end
     self.image = @images[((@direction + 23) % 360) / 45][frame]
 
-    
     # hit enemy
-    enemies = self.check(Enemies.list)# unless Enemies.list.empty?
+    enemies = check(Enemy.list) # unless Enemy.list.empty?
     unless enemies.empty? || @is_hit
       @life -= 50
       @hit_tick = tick
       @is_hit = true
-      Enemies.list.delete(enemies[0])
+      Enemy.list.delete(enemies[0])
     end
 
     if @hit_tick != 0 && tick - @hit_tick < 180
@@ -96,7 +88,6 @@ class Player < Sprite
       self.alpha = 255
       @is_hit = false
     end
-
 
     # Input
     # spell change
@@ -119,19 +110,19 @@ class Player < Sprite
         @bullet_count += 1
         _fire_bullet(tick) if @bullet_count % 14 == 0
       end
-  
+
       if @charge_percent >= 1.0 && Input.mouse_release?(1)
         _fire_bullet(tick, 2)
         @_mouse_down_count = 0
       end
-  
+
       if Input.mouse_down?(1)
         @_mouse_down_count += 1
         @_mouse_down_count = [@_mouse_down_count, BulletData.charge_tick[@spell]].min
       else
         @_mouse_down_count = 0
       end
-  
+
       @charge_percent = @_mouse_down_count.to_f / BulletData.charge_tick[@spell]
     end
   end
@@ -141,25 +132,16 @@ class Player < Sprite
   def _fire_bullet(tick, level = 1)
     # @@se_bullet.play
     if level == 1
-      _x = self.x + (self.image.width * 0.5)  + self.image.width  * 0.4 * Math.cos(@direction * Math::PI / 180.0)
-      _y = self.y + (self.image.height * 0.6) + self.image.height * 0.4 * Math.sin(@direction * Math::PI / 180.0)
-      img = Image.new(10, 10, Bullet._spell_color[@spell])
-      Bullet.new(@spell, 20, @direction, _x, _y, img)
+      _x = self.x + (image.width * 0.5)  + image.width  * 0.4 * Math.cos(@direction * Math::PI / 180.0)
+      _y = self.y + (image.height * 0.6) + image.height * 0.4 * Math.sin(@direction * Math::PI / 180.0)
+      Bullet.new(self, BulletData.list[:"level1_#{@spell}"], tick, _x, _y, @direction)
     elsif level == 2
-      case @spell
-      when :fire
-        _x = BulletData.fire_x(self)
-        _y = BulletData.fire_y(self)
-        ChargeBullet.new(BulletData.list[:fire], tick, _x, _y, @direction)
-        @cool_time = 100
-      when :wind
-        _x = BulletData.fire_x(self)
-        _y = BulletData.fire_y(self)
-        ChargeBullet.new(BulletData.list[:wind], tick, _x, _y, @direction)
-        @cool_time = 100
-      else
-        raise NameError.new("undefined #{@spell} from  Player._fire_ballet()")
+      bullet_name = :"level2_#{@spell}"
+      unless BulletData.list.keys.include?(bullet_name)
+        raise NameError, "BulletData.list undefined :#{bullet_name}"
       end
+      Bullet.new(self, BulletData.list[bullet_name], tick, nil, nil, @direction)
+      @cool_time = 100
     end
   end
 
@@ -176,18 +158,13 @@ class Player < Sprite
       # _y = center_y + self.image.height * 0.35 * Math.sin(@direction * Math::PI / 180.0)
       # Window.draw_rot(_x, _y, BulletData.list[:fire].image, @direction + 90, 64, 128)
     end
-    
+
     # self.image
     super
-    
+
     # ため攻撃のゲージ
     _x = self.x - 20
     _y = self.y + 10
     Window.draw(_x, _y, @charge_circle_img[(@charge_percent * 8).to_i])
-  end
-
-  def has_spell?(spell)
-    spell = spell.to_sym
-    @has_spell[spell]
   end
 end

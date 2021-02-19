@@ -1,4 +1,4 @@
-class UI
+class HPBar
   def initialize
     @@enemy_hp_bar = []
     @@boss_hp_bar = []
@@ -7,7 +7,7 @@ class UI
   class << self
     def draw
       @@enemy_hp_bar.each do |me|
-        @@enemy_hp_bar.delete(me) unless Enemies.list.include?(me[:enemy])
+        @@enemy_hp_bar.delete(me) unless Enemy.list.include?(me[:enemy]) && !me[:enemy].vanished?
         next if me[:enemy].data.hp == me[:enemy].data.max_hp
 
         me[:bar] = Image.new(1 + me[:base].width * (me[:enemy].data.hp.to_f / me[:enemy].data.max_hp.to_f), me[:base].height - 4, C_GREEN)
@@ -28,4 +28,4 @@ class UI
   end
 end
 
-UI.new
+HPBar.new

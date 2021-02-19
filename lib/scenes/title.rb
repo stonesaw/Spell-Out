@@ -22,9 +22,16 @@ class Title < Scene
     @@mini_char_anime = 0
     @@mini_field_top = Sprite.new(0, Window.height - 102, Image.new(Window.width, 22, [140, 255, 255, 255]))
     @@mini_field_img = Image.new(48, 80, [100, 255, 255, 255])
+    @@bullets = []
     @@spell_count = 0
     @@hit_spell = nil
-    Bullet.reset
+    @@_spell_color = {
+      fire: [255, 0, 0],
+      water: [55, 183, 230],
+      wind: [23, 255, 123],
+      holy: [249, 250, 212],
+      dark: [121, 73, 173],
+    }
   end
 
   class << self
@@ -53,7 +60,7 @@ class Title < Scene
       @@cursor = [[0, @@cursor].max, 2].min if @@cursor != -99
       @@cursor = -99 if @@section_play.on_mouse? || @@section_credit.on_mouse? || @@section_exit.on_mouse?
 
-      if Input.mouse_down?(0) || Input.key_down?(K_RETURN)
+      if Input.mouse_down?(0) || Input.key_down?(K_RETURN) || Input.pad_down?(P_BUTTON0)
         if @@section_play.on_mouse? || @@cursor == 0
           @@se_enter_play.play
           SceneManager.next(:play, loading: true)
@@ -75,19 +82,21 @@ class Title < Scene
       if Input.key_push?(K_SPACE) || Input.mouse_push?(0)
         x = @@mini_char.x + @@mini_char.image.width * 0.7
         y = @@mini_char.y + @@mini_char.image.height * 0.6
-        spell = Bullet._spell_color.keys[@@spell_count]
-        img = Image.new(10, 10, Bullet._spell_color.values[@@spell_count])
-        Bullet.new(spell, 0, 0, x, y, img)
+        spell = @@_spell_color.keys[@@spell_count]
+        img = Image.new(10, 10, @@_spell_color.values[@@spell_count])
+        @@bullets << {:"#{spell}" => Sprite.new(x, y, img)}
         @@spell_count = (@@spell_count + 1) % 5
       end
-      Bullet.list.each do |b|
-        @@hit_spell = b.spell if b.x >= Window.width - 10
+      @@bullets.each do |b|
+        bullet = b.values[0]
+        spell = b.keys[0]
+        bullet.x += 10
+        @@hit_spell = spell if bullet.x >= Window.width - 10
       end
-      Bullet.update(nil, nil)
     end
 
     def draw
-      c = @@hit_spell ? Bullet._spell_color[@@hit_spell] : C_WHITE
+      c = @@hit_spell ? @@_spell_color[@@hit_spell] : C_WHITE
       Window.draw_font(30, -100, 'Spell', @@font_title, color: c)
       Window.draw_font(30,  100, 'Out',   @@font_title, color: c)
 
@@ -101,7 +110,11 @@ class Title < Scene
 
       @@mini_char.draw
       _draw_mini_char_field
-      Bullet.draw
+      @@bullets.each do |b|
+        bullet = b.values[0]
+        spell = b.keys[0]
+        bullet.draw
+      end
     end
 
     def last
