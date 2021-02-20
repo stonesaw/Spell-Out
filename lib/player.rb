@@ -128,24 +128,11 @@ class Player < Sprite
   end
 
   def draw
-    if $debug_mode # キャラの当たり判定の範囲
-      x1 = self.x + 8
-      y1 = self.y + 36
-      Window.draw_box(x1, y1, x1 + 62, y1 + 76, C_WHITE)
-      # center_x = self.x - 30
-      # center_y = self.y - 50
-      # _x = center_x + self.image.width  * 0.4  * Math.cos(@direction * Math::PI / 180.0)
-      # _y = center_y + self.image.height * 0.35 * Math.sin(@direction * Math::PI / 180.0)
-      # Window.draw_rot(_x, _y, BulletData.list[:fire].image, @direction + 90, 64, 128)
-    end
-
-    # self.image
     super
 
     # ため攻撃のゲージ
-    _x = self.x - 20
-    _y = self.y + 10
-    Window.draw(_x, _y, @charge_circle_img[(@charge_percent * 8).to_i])
+    Window.draw(self.x - 20, self.y + 10,
+                @charge_circle_img[(@charge_percent * 8).to_i])
   end
 
   private def _fire_bullet(tick, level: 1)

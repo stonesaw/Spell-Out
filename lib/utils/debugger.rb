@@ -8,27 +8,27 @@ class Debugger
   @_str = ''
   @_list = []
 
-  def initialize(font_size: 24, font_name: '', option: {},
-                 color: C_WHITE, ox: 10, oy: 10)
-    self.class.font = Font.new(font_size, font_name, option)
-    self.class.color = color
-    self.class.ox = ox
-    self.class.oy = oy
-    self.class._str = ''
-    self.class._list = []
+  def self.new(font_size: 24, font_name: '', option: {},
+               color: C_WHITE, ox: 10, oy: 10)
+    @font = Font.new(font_size, font_name, option)
+    @color = color
+    @ox = ox
+    @oy = oy
+    @_str = ''
+    @_list = []
   end
 
   class << self
     attr_accessor :font, :color, :ox, :oy, :_str, :_list
   end
 
-  def print(str)
-    @_str += str.to_s
+  def self.print(str)
+    @_str << str.to_s
     self
   end
 
   def self.puts(str)
-    @_str += [str.to_s.chomp, "\n"].join
+    @_str << [str.to_s.chomp, "\n"].join
     self
   end
 
@@ -49,17 +49,34 @@ class Debugger
     @_list = []
   end
 
-  # TODO
-  # draw_hit_box(Sprite | [Sprite])
-  def self.draw_hit_box(sprite)
-    if sprite.class == Sprite
+  # arg: sprite : Sprite Object | [ Sprite Object ]
+  def self.draw_collision(sprite)
+    if sprite.class < Sprite
       sprite = [sprite]
     elsif sprite.class == Array
     else
       raise ArgumentError, "please (Sprite or [Sprite])"
     end
-    sprite.each do |s|
-      # TODO
+    sprite.each do |sp|
+      next unless sp.collision_enable
+
+      # TODO Sprite#collision_sync の対応
+
+      col = sp.collision
+      if col.nil? # box
+        Window.draw_box(sp.x, sp.y, sp.x + sp.image.width, sp.y + sp.image.height, @color)
+      elsif col.length == 2 # dot
+        Window.draw_pixel(sp.x + col[0], sp.y + col[1], @color)
+      elsif col.length == 3 # circle
+        Window.draw_circle(sp.x + col[0], sp.y + col[1], col[2], @color)
+      elsif col.length == 4 # box
+        Window.draw_box(sp.x + col[0], sp.y + col[1],
+                        sp.x + col[2], sp.y + col[3], @color)
+      elsif col.length == 6 # triangle
+        Window.draw_triangle(sp.x + col[0], sp.y + col[1],
+                             sp.x + col[2], sp.y + col[3],
+                             sp.x + col[4], sp.y + col[5], @color)
+      end
     end
   end
 end

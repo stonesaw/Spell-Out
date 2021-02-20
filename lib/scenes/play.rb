@@ -100,6 +100,12 @@ class Play < Scene
       color: [230, 230, 230]
     )
     Window.draw_font(Window.width - w - 40, 30, "LEVEL: #{@player.level}", @font)
+
+    if $debug_mode
+      Debugger.draw_collision(
+        Enemy.list + [@player] + Bullet.list
+      )
+    end
   end
 
   def self.last
