@@ -2,12 +2,8 @@ inherit_from:
   - .rubocop_todo.yml
   - .rubocop_airbnb.yml
 
-
 Rails:
   Enabled: false
-
-LineLength:
-  Max: 110
 
 # {} は 1 行で書くときに主に使われるので、スペースよりも
 # 横に長くならない方が嬉しさが多い。
@@ -15,9 +11,13 @@ LineLength:
 Layout/SpaceInsideBlockBraces:
   SpaceBeforeBlockParameters: false
 
-# ドットの位置をメソッド名と同じ行にする
-DotPosition:
-  EnforcedStyle: leading
+# 2行以上の空行を許可する
+Layout/EmptyLines:
+  Enabled: false
+
+# 行の長さの最大値を110に
+Metrics/LineLength:
+  Max: 110
 
 
 # -------- old rubocop.yml --------
