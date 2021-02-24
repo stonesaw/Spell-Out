@@ -59,7 +59,9 @@ class Title < Scene
     @blank = [0, @blank - 1].max
 
     # cursor
-    @se_cursor.play if Input.key_push?(K_DOWN) || Input.key_push?(K_UP)
+    if Input.key_push?(K_DOWN) || Input.key_push?(K_UP)
+      @se_cursor.play
+    end
     @cursor += 1 if Input.key_push?(K_DOWN)
     @cursor -= 1 if Input.key_push?(K_UP)
     @cursor = [[0, @cursor].max, 2].min if @cursor != -99

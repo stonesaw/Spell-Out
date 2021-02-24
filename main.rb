@@ -49,7 +49,7 @@ SceneManager.new({
   play: Play,
   menu: Menu,
   game_over: GameOver,
-  ranking: Ranking
+  ranking: Ranking,
 })
 
 Window.loop do

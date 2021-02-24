@@ -42,7 +42,7 @@ class Ranking < Scene
       w = [
         @font_big.get_width(name.to_s) + 20,
         @font_nomal.get_width(score.to_s) + 20,
-        @font_mini.get_width(time.to_s) + 20
+        @font_mini.get_width(time.to_s) + 20,
       ]
       name_s =  @font_big.get_width('AAAAAAAA')
       score_s = name_s + @font_big.get_width('1000')

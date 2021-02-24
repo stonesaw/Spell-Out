@@ -11,7 +11,6 @@ class Enemy < Sprite
     @list = []
   end
 
-
   def initialize(data, now_tick, x, y, player)
     @data = data.dup
     super
@@ -57,7 +56,7 @@ class Enemy < Sprite
 
   def spell_missing?(bullet)
     self.class._spell_miss.each do |to, from|
-      return true if bullet.spell == to && data.spell == from
+      return (bullet.spell == to && data.spell == from)
     end
     false
   end

@@ -1,7 +1,7 @@
 class BGM
   @list = {
     # name: [sound, lenth(sec), base_volume]
-    chill: [Sound.new("#{$PATH}/assets/sound/32-2.wav"), 78.0, 240]
+    chill: [Sound.new("#{$PATH}/assets/sound/32-2.wav"), 78.0, 240],
   }
   @play_scene = [:play, :menu, :game_over, :ranking]
   @now = :chill

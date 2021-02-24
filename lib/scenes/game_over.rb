@@ -84,13 +84,12 @@ class GameOver < Scene
     end
   end
 
-  private
-
   def self._call_alert(str)
     str = str.to_s
-    @alerts << Image.new(@font_mini.get_width(str) + 20, @font_mini.size)
-                  .draw_font(10, 0, str, @font_mini, [230, 230, 230])
+    @alerts << Image.new(@font_mini.get_width(str) + 20, @font_mini.size).
+      draw_font(10, 0, str, @font_mini, [230, 230, 230])
     @alerts_stay_cnt << 160 # tick
     @alerts_alpha << 255
   end
+  private_class_method :_call_alert
 end

@@ -50,7 +50,9 @@ class TextBox
   def draw
     @frame.draw
     @moji.draw
-    @cursor.draw if @is_choose && (@tick % @flash_rate * 2 < @flash_rate)
+    if @is_choose && (@tick % @flash_rate * 2 < @flash_rate)
+      @cursor.draw
+    end
   end
 
   private
@@ -59,7 +61,7 @@ class TextBox
     26.times do |i|
       next unless Input.key_push?(eval("K_#{@alphabet[i].upcase}"))
 
-      @string += @alphabet[i].upcase
+      @string << @alphabet[i].upcase
 
       # choose upcase or down case cf. pushig shift key
       # if Input.key_down?(K_LSHIFT) || Input.key_down?(K_RSHIFT)
@@ -68,7 +70,9 @@ class TextBox
       #   @string += @alphabet[i]
       # end
     end
-    @string += ' ' if Input.key_push?(K_SPACE) || Input.key_down?(K_SPACE) && @tick % 6 == 0
+    if Input.key_push?(K_SPACE) || Input.key_down?(K_SPACE) && @tick % 6 == 0
+      @string << ' '
+    end
     if @string.length > 0 && (Input.key_push?(K_BACK) || Input.key_down?(K_BACK) && @tick % 6 == 0)
       @string.chop!
     end

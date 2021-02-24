@@ -74,7 +74,7 @@ class Player < Sprite
 
     # hit enemy
     enemies = check(Enemy.list) # unless Enemy.list.empty?
-    unless enemies.empty? || @is_hit
+    if !enemies.empty? && !@is_hit
       @life -= 50
       @hit_tick = Play.tick
       @is_hit = true

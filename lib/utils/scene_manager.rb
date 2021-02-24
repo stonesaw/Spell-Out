@@ -35,7 +35,7 @@ class SceneManager
     @scenes = scenes
     if start.nil?
       @now = @scenes.first[0] # first symbol
-    elsif @scenes.has_key?(start)
+    elsif @scenes.key?(start)
       @now = start
     else
       raise ArgumentError, "SceneManager haven't key '#{start}' Arg:start"
@@ -67,7 +67,7 @@ class SceneManager
   end
 
   def self.next(scene_symbol, *args, loading: false, is_init: true)
-    unless @scenes.has_key?(scene_symbol)
+    unless @scenes.key?(scene_symbol)
       raise ArgumentError, "SceneManager haven't key '#{scene_symbol}' Arg:scene_symbol"
     end
     raise ArgumentError, "'#{scene_symbol}' is now scene" if scene_symbol == @now
@@ -86,15 +86,15 @@ class SceneManager
     end
   end
 
-  private
-
   def self._do_loading(*args)
     thr = Thread.new do
       @scenes[@now].new(*args) # load
     end
 
     loop do
-      break if Input.key_push?(K_ESCAPE) && Input.key_push?(K_DELETE)
+      if Input.key_push?(K_ESCAPE) && Input.key_push?(K_DELETE)
+        break
+      end
 
       Window.update
       Loading.update
@@ -105,4 +105,5 @@ class SceneManager
       end
     end
   end
+  private_class_method :_do_loading
 end

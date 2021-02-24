@@ -2,6 +2,10 @@ inherit_from:
   - .rubocop_todo.yml
   - .rubocop_airbnb.yml
 
+AllCops:
+  Exclude:
+    - 'lib/data/**'
+
 Rails:
   Enabled: false
 
