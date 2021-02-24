@@ -18,7 +18,13 @@ class Title < Scene
     @blank = 60
 
     @tick = 0
-    @mini_char = Sprite.new(60, Window.height - 100 - $player_images[0][0].height, $player_images[0][0])
+    _img = Image.load_tiles("#{$PATH}/assets/image/wizard.png", 6, 4)
+    load_setting = [4, 3, 0, 1, 2, 7, 6, 5]
+    @player_images = load_setting.map do |i|
+      s = i * 3
+      [_img[s], _img[s + 1], _img[s + 2]]
+    end
+    @mini_char = Sprite.new(60, Window.height - 100 - @player_images[0][0].height, @player_images[0][0])
     @mini_char_anime = 0
     @mini_field_top = Sprite.new(0, Window.height - 102, Image.new(Window.width, 22, [140, 255, 255, 255]))
     @mini_field_img = Image.new(48, 80, [100, 255, 255, 255])
@@ -77,7 +83,7 @@ class Title < Scene
     # mini charactor
     if @tick % 10 == 0
       @mini_char_anime = (@mini_char_anime + 1) % 3
-      @mini_char.image = $player_images[0][@mini_char_anime]
+      @mini_char.image = @player_images[0][@mini_char_anime]
     end
 
     if Input.key_push?(K_SPACE) || Input.mouse_push?(0)

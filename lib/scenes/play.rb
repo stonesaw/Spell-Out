@@ -8,12 +8,18 @@ class Play < Scene
     @spell_icon = Sprite.new(1000, 600, Image.new(64, 64, C_WHITE))
     # @heart_icon = Image.load("#{$PATH}/assets/image/icon_Heart.png")
 
+    _img = Image.load_tiles("#{$PATH}/assets/image/wizard.png", 6, 4)
+    load_setting = [4, 3, 0, 1, 2, 7, 6, 5]
+    player_images = load_setting.map do |i|
+      s = i * 3
+      [_img[s], _img[s + 1], _img[s + 2]]
+    end
     @player = Player.new(
       :fire,
-      (Window.width - $player_images[0][0].width) * 0.5, Window.height * 0.7,
-      $player_images
+      (Window.width - player_images[0][0].width) * 0.5, Window.height * 0.7,
+      player_images
     )
-    r = $player_images[0][0].width / 2
+    r = @player.image.width / 2
     Input.set_mouse_pos(@player.x * Window.scale + r, @player.y * Window.scale + r)
     EnemiesData.load
     BulletData.load

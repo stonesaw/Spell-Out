@@ -16,14 +16,6 @@ Font.install("#{$PATH}/assets/font/misaki_gothic.ttf")
 
 $debug_mode = ARGV.include?('debug') || ARGV.include?('-d')
 
-_img = Image.load_tiles("#{$PATH}/assets/image/wizard.png", 6, 4)
-load_setting = [4, 3, 0, 1, 2, 7, 6, 5]
-$player_images = []
-8.times do |i|
-  s = load_setting[i] * 3
-  $player_images[i] = [_img[s], _img[s + 1], _img[s + 2]]
-end
-
 require_relative 'lib/utils/wrapper'
 require_relative 'lib/utils/scene_manager'
 require_relative 'lib/utils/debugger'
