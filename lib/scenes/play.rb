@@ -18,16 +18,13 @@ class Play < Scene
     EnemiesData.load
     BulletData.load
     EnemySpawnSystem.new
-    p stage
-    @stage = StageData.load(stage)
+    @stage = StageData.load(stage, @player)
     @tick = 0
     $score = 0
 
     @book_anime = Image.load_tiles("#{$PATH}/assets/image/book_anime.png", 16, 1)
     @book = Sprite.new(10, 800, @book_anime[0])
     @book_anime_count = 0
-
-    Window.bgcolor = [142, 199, 95]
   end
 
   def self.set_music
@@ -43,8 +40,13 @@ class Play < Scene
 
     SceneManager.next(:menu) if Input.key_release?(K_TAB)
 
+    @stage.update(@tick, @player)
+    if @stage.is_clear
+      SceneManager.next(:title)
+    end
+
     # spown enemy
-    EnemySpawnSystem.update(@tick, @player)
+    # EnemySpawnSystem.update(@tick, @player)
 
     # update
     @player.update(@tick)
@@ -86,7 +88,7 @@ class Play < Scene
     Debugger.puts("bullet length : #{Bullet.list.length}")
     Debugger.puts("enemy length: #{Enemy.list.length}")
 
-    # @bg.draw
+    @stage.draw
     Bullet.draw
     Sprite.draw(Enemy.list)
     # Enemies.draw

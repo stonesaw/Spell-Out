@@ -20,7 +20,6 @@ class GameOver < Scene
 
   def initialize(symbol)
     super()
-    Window.bgcolor = [0, 0, 0]
     self.class.symbol = symbol
   end
 

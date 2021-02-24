@@ -14,7 +14,7 @@ Window.bgcolor = [26, 26, 26]
 Font.install("#{$PATH}/assets/font/Poco.ttf")
 Font.install("#{$PATH}/assets/font/misaki_gothic.ttf")
 
-$debug_mode = false
+$debug_mode = ARGV.include?('debug') || ARGV.include?('-d')
 
 _img = Image.load_tiles("#{$PATH}/assets/image/wizard.png", 6, 4)
 load_setting = [4, 3, 0, 1, 2, 7, 6, 5]
