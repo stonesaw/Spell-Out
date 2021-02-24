@@ -1,31 +1,31 @@
 class Stage
   attr_reader :is_clear
 
-  def initialize(name, waves, player)
+  def initialize(name, waves)
     @name = name
     @waves = waves
     @now = 0
     @wave = @waves[@now]
     @is_clear = false
-    @wave.proc_begin.call(self, 0, player)
+    @wave.proc_begin.call(self)
   end
 
-  def update(tick, player)
+  def update
     Debugger.puts("stage update")
     # if (@now == @waves.length && Enemy.list.length == 0) || (@boss_flag && !exists_boss?)
     #   @is_clear = true
     # end
-    @wave.proc_update.call(self, tick, player)
+    @wave.proc_update.call(self)
 
     # wave clear
     if Enemy.list.length == 0
-      @wave.proc_end.call
+      @wave.proc_end.call(self)
       @now += 1
       if @now > @waves.length - 1
         @is_clear = true
       else
         @wave = @waves[@now]
-        @wave.proc_begin.call(self, tick, player)
+        @wave.proc_begin.call(self)
       end
     end
   end

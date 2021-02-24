@@ -1,12 +1,16 @@
 # Scene - Play
 
 class Play < Scene
+  class << self
+    attr_reader :tick
+    attr_accessor :player, :stage
+  end
+
   def self.new(stage)
     Debugger.color = [240, 240, 240]
+    @tick = 0
     @font = Font.new(80, 'Poco')
     @font_mini = Font.new(50, 'Poco')
-    @spell_icon = Sprite.new(1000, 600, Image.new(64, 64, C_WHITE))
-    # @heart_icon = Image.load("#{$PATH}/assets/image/icon_Heart.png")
 
     _img = Image.load_tiles("#{$PATH}/assets/image/wizard.png", 6, 4)
     load_setting = [4, 3, 0, 1, 2, 7, 6, 5]
@@ -24,8 +28,7 @@ class Play < Scene
     EnemiesData.load
     BulletData.load
     EnemySpawnSystem.new
-    @stage = StageData.load(stage, @player)
-    @tick = 0
+    @stage = StageData.load(stage)
     $score = 0
 
     @book_anime = Image.load_tiles("#{$PATH}/assets/image/book_anime.png", 16, 1)
@@ -46,7 +49,7 @@ class Play < Scene
 
     SceneManager.next(:menu) if Input.key_release?(K_TAB)
 
-    @stage.update(@tick, @player)
+    @stage.update
     if @stage.is_clear
       SceneManager.next(:title)
     end
@@ -55,19 +58,18 @@ class Play < Scene
     # EnemySpawnSystem.update(@tick, @player)
 
     # update
-    @player.update(@tick)
+    @player.update
 
     _to_scene_game_over if @player.life <= 0
     if EnemySpawnSystem.is_boss && Enemy.list.empty?
       _to_scene_game_clear
     end
 
-    Bullet.update(@tick, @player)
+    Bullet.update
     # Enemies.update(:any, @tick, @player)
     i = -1
     Enemy.list.length.times do
-      enemy = Enemy.list[i]
-      enemy.update(enemy, @tick, @player)
+      Enemy.list[i].update
       i -= 1
     end
     Sprite.clean(Enemy.list)

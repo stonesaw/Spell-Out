@@ -37,12 +37,12 @@ class EnemiesData
     slime_img = Image.load_tiles("#{$PATH}/assets/image/slime.png", 3, 1)
     @list[:slime1] = IEnemyData.new('水スライム', :water, 100, 10, 10, slime_img[0], anime: slime_img)
     
-    @list[:slime1].when_spawned do |enemy, tick, player|
+    @list[:slime1].when_spawned do |enemy|
       enemy.add_hp_bar(x: 0.7, y: 0.7)
       enemy.collision = [64, 100, 27]
     end
-    @list[:slime1].when_lived do |enemy, tick, player|
-      passed_tick = tick - enemy.spawn_tick
+    @list[:slime1].when_lived do |enemy|
+      passed_tick = Play.tick - enemy.spawn_tick
       enemy.y += 4
       enemy.anime_next if passed_tick % 10 == 0
     end
@@ -52,18 +52,18 @@ class EnemiesData
     slime2_img = Image.load_tiles("#{$PATH}/assets/image/slime2.png", 3, 1)
     @list[:slime2] = IEnemyData.new('風スライム', :wind, 100, 10, 10, slime2_img[0], anime: slime2_img)
     
-    @list[:slime2].when_spawned do |enemy, tick, player|
+    @list[:slime2].when_spawned do |enemy|
       enemy.add_hp_bar(x: 0.7, y: 0.7)
       enemy.collision = [64, 100, 27]
       enemy.data.var[:speed] = 2
     end
     
-    @list[:slime2].when_lived do |enemy, tick, player|
-      passed_tick = tick - enemy.spawn_tick
+    @list[:slime2].when_lived do |enemy|
+      passed_tick = Play.tick - enemy.spawn_tick
 
       if passed_tick <= 100
-        distance_x = enemy.x - player.x
-        distance_y = enemy.y - player.y
+        distance_x = enemy.x - Play.player.x
+        distance_y = enemy.y - Play.player.y
         enemy.data.direction = Math.atan2(distance_y, distance_x) * 180.0 / Math::PI
         enemy.data.direction = 360 + enemy.data.direction if enemy.data.direction < 0
       end
@@ -81,12 +81,12 @@ class EnemiesData
       end
     end
 
-    @list[:slime2].when_dead do |enemy, tick, player|
+    @list[:slime2].when_dead do |enemy|
       SE.play(:retro04)
       # $se_retro04.set_volume(255 * $volume)
       $score += enemy.data.score
-      player.exp += enemy.data.exp
-      player.level = player.exp / 50 # TODO: レベルのあげ方
+      Play.player.exp += enemy.data.exp
+      Play.player.level = Play.player.exp / 50 # TODO: レベルのあげ方
 
       enemy.vanish
     end
@@ -97,12 +97,12 @@ class EnemiesData
     golem_img = [_golem_img[0], _golem_img[1], _golem_img[2]]
     @list[:golem] = IEnemyData.new('ゴーレム', :dark, 500, 1000, 100, golem_img[0], anime: golem_img)
     
-    @list[:golem].when_spawned do |enemy, tick, player|
+    @list[:golem].when_spawned do |enemy|
       enemy.add_hp_bar
     end
 
-    @list[:golem].when_lived do |enemy, tick, player|
-      passed_tick = tick - enemy.spawn_tick
+    @list[:golem].when_lived do |enemy|
+      passed_tick = Play.tick - enemy.spawn_tick
       enemy.y += 2
 
       enemy.y = -300 if enemy.y > Window.height
@@ -117,12 +117,12 @@ class EnemiesData
       end
     end
 
-    @list[:golem].when_dead do |enemy, tick, player|
+    @list[:golem].when_dead do |enemy|
       SE.play(:retro04)
       # $se_retro04.set_volume(255 * $volume)
       $score += enemy.data.score
-      player.exp += enemy.data.exp
-      player.level = player.exp / 50 # TODO: レベルのあげ方
+      Play.player.exp += enemy.data.exp
+      Play.player.level = Play.player.exp / 50 # TODO: レベルのあげ方
 
       enemy.vanish
     end

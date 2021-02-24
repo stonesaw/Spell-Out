@@ -32,42 +32,42 @@ class StageData
     attr_accessor :list
   end
 
-  def self.load(stage_str, player)
+  def self.load(stage_str)
     if /(?<chapter>\d)-(?<section>\d)/ =~ stage_str
-      send(:"load_#{chapter}_#{section}", player)
+      send(:"load_#{chapter}_#{section}")
     else
       raise ArgumentError, "wrong stage_str (#{stage_str})"
     end
   end
 
   # return IStageData
-  def self.load_1_1(_player)
+  def self.load_1_1
     bg_gray = Image.new(Window.width, Window.height, [140, 140, 140])
     waves = []
     waves << IWaveData.new(bg_gray, []).
-      when_begin do |stage, tick, player|
+      when_begin do |stage|
         Debugger.puts 'wave 1/3 begin!'
-        Enemy.new(EnemiesData.list[:slime2], tick, 100, 100, player)
+        Enemy.new(EnemiesData.list[:slime2], Play.tick, 100, 100, Play.player)
       end.
-      when_update do |stage, tick, player|
+      when_update do |stage|
         Debugger.puts 'wave 1/3 update!'
       end.
-      when_end do |stage, tick, player|
+      when_end do |stage|
         Debugger.puts 'wave 1/3 end!'
       end
 
     waves << IWaveData.new(bg_gray, []).
-      when_begin do |stage, tick, player|
+      when_begin do |stage|
         Debugger.puts 'wave 2/3 begin!'
       end.
-      when_update do |stage, tick, player|
+      when_update do |stage|
         Debugger.puts 'wave 2/3 update!'
       end.
-      when_end do |stage, tick, player|
+      when_end do |stage|
         Debugger.puts 'wave 2/3 end!'
       end
 
     # return
-    Stage.new('1-1', waves, _player)
+    Stage.new('1-1', waves)
   end
 end

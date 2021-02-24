@@ -24,14 +24,14 @@ class Enemy < Sprite
     # @data.remove_instance_variable(:@anime)
     @spawn_tick = now_tick
 
-    @data.proc_spawned.call(self, now_tick, player)
+    @data.proc_spawned.call(self)
 
     self.class.list << self
   end
 
-  def update(enemy, tick, player)
-    @data.proc_lived.call(enemy, tick, player)
-    @data.proc_dead.call(enemy, tick, player) if data.hp <= 0
+  def update
+    @data.proc_lived.call(self)
+    @data.proc_dead.call(self) if data.hp <= 0
   end
 
   # utils
@@ -60,6 +60,10 @@ class Enemy < Sprite
       return true if bullet.spell == to && data.spell == from
     end
     false
+  end
+
+  # TODO
+  def hit_check_field_objects()
   end
 
   def anime_next

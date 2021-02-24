@@ -36,16 +36,16 @@ class BulletData
 
     @list[:level2_fire] = IBulletData.new(
       :fire, 50, fire_img[0], anime: fire_img
-    ).when_spawned do |bullet, tick, player|
+    ).when_spawned do |bullet|
       bullet.center_x = 64
       bullet.center_y = 128
     end
-    .when_lived do |bullet, tick, player|
-      passed_tick = tick - bullet.spawn_tick
+    .when_lived do |bullet|
+      passed_tick = Play.tick - bullet.spawn_tick
 
-      bullet.x = player.x - 30 + player.image.width  * 0.4  * Math.cos(player.direction * Math::PI / 180.0)
-      bullet.y = player.y - 50 + player.image.height * 0.35 * Math.sin(player.direction * Math::PI / 180.0)
-      bullet.angle = player.direction + 90
+      bullet.x = Play.player.x - 30 + Play.player.image.width  * 0.4  * Math.cos(Play.player.direction * Math::PI / 180.0)
+      bullet.y = Play.player.y - 50 + Play.player.image.height * 0.35 * Math.sin(Play.player.direction * Math::PI / 180.0)
+      bullet.angle = Play.player.direction + 90
       bullet.alpha -= 10 if passed_tick >= 80 - 25
 
       bullet._anime_next if passed_tick % 16 == 0
@@ -61,15 +61,15 @@ class BulletData
 
     BulletData.list[:level2_wind] = IBulletData.new(
       :wind, 0, wind_img[0], anime: wind_img, is_draw_after: true
-    ).when_spawned do |bullet, tick, player|
-      player.life = [player.life + 10, player.max_life].min
+    ).when_spawned do |bullet|
+      Play.player.life = [Play.player.life + 10, Play.player.max_life].min
       bullet.collision_enable = false # 当たり判定をなくす
     end
-    .when_lived do |bullet, tick, player|
-      passed_tick = tick - bullet.spawn_tick
+    .when_lived do |bullet|
+      passed_tick = Play.tick - bullet.spawn_tick
 
-      bullet.x = player.x + 10
-      bullet.y = player.y + 50
+      bullet.x = Play.player.x + 10
+      bullet.y = Play.player.y + 50
 
       if (0..3).include?(passed_tick % 10)
         bullet.alpha = 0
@@ -97,10 +97,10 @@ class BulletData
   def self._list_add_level1_bullet
     spell_and_color.each_pair do |key, value|
       list[:"level1_#{key}"] = IBulletData.new(key, 10, Image.new(10, 10, value))
-      .when_spawned do |bullet, tick, player|
+      .when_spawned do |bullet|
         bullet.data.var[:speed] = 12
       end
-      .when_lived do |bullet, tick, player|
+      .when_lived do |bullet|
         bullet.x += bullet.data.var[:speed] * Math.cos(bullet.direction * Math::PI / 180.0)
         bullet.y += bullet.data.var[:speed] * Math.sin(bullet.direction * Math::PI / 180.0)
       end

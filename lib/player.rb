@@ -35,7 +35,7 @@ class Player < Sprite
     end
   end
 
-  def update(tick)
+  def update
     # player controll
     mx = Mouse.x
     my = Mouse.y
@@ -64,7 +64,7 @@ class Player < Sprite
     # self.y = (Window.height - self.image.height) / 2
 
     # [右 → から時計回り][アニメーション]
-    @anime_count += 1 if tick % 10 == 0
+    @anime_count += 1 if Play.tick % 10 == 0
     frame = if anime_stop
               1
             else
@@ -76,12 +76,12 @@ class Player < Sprite
     enemies = check(Enemy.list) # unless Enemy.list.empty?
     unless enemies.empty? || @is_hit
       @life -= 50
-      @hit_tick = tick
+      @hit_tick = Play.tick
       @is_hit = true
       Enemy.list.delete(enemies[0])
     end
 
-    if @hit_tick != 0 && tick - @hit_tick < 180
+    if @hit_tick != 0 && Play.tick - @hit_tick < 180
       self.alpha += 30
     else
       self.alpha = 255
@@ -103,16 +103,16 @@ class Player < Sprite
     if @cool_time <= 0
       if !Input.mouse_down?(1) && (Input.key_push?(K_SPACE) || Input.mouse_push?(0))
         @bullet_count = 0
-        _fire_bullet(tick)
+        _fire_bullet
       end
       if !Input.mouse_down?(1) &&
         (PlayerSetting.auto_attack || Input.key_down?(K_SPACE) || Input.mouse_down?(0))
         @bullet_count += 1
-        _fire_bullet(tick) if @bullet_count % 14 == 0
+        _fire_bullet if @bullet_count % 14 == 0
       end
 
       if @charge_percent >= 1.0 && Input.mouse_release?(1)
-        _fire_bullet(tick, level: 2)
+        _fire_bullet(level: 2)
         @_mouse_down_count = 0
       end
 
@@ -135,17 +135,17 @@ class Player < Sprite
                 @charge_circle_img[(@charge_percent * 8).to_i])
   end
 
-  private def _fire_bullet(tick, level: 1)
+  private def _fire_bullet(level: 1)
     if level == 1
       _x = self.x + (image.width * 0.5)  + image.width  * 0.4 * Math.cos(@direction * Math::PI / 180.0)
       _y = self.y + (image.height * 0.6) + image.height * 0.4 * Math.sin(@direction * Math::PI / 180.0)
-      Bullet.new(self, BulletData.list[:"level1_#{@spell}"], tick, _x, _y, @direction)
+      Bullet.new(self, BulletData.list[:"level1_#{@spell}"], Play.tick, _x, _y, @direction)
     elsif level == 2
       bullet_name = :"level2_#{@spell}"
       unless BulletData.list.keys.include?(bullet_name)
         raise NameError, "BulletData.list undefined :#{bullet_name}"
       end
-      Bullet.new(self, BulletData.list[bullet_name], tick, nil, nil, @direction)
+      Bullet.new(self, BulletData.list[bullet_name], Play.tick, nil, nil, @direction)
       @cool_time = 100
     end
   end

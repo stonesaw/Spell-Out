@@ -15,7 +15,7 @@ class Bullet < Sprite
     @_anime_cnt = 0
     @spawn_tick = now_tick
 
-    @data.proc_spawned.call(self, now_tick, player)
+    @data.proc_spawned.call(self)
     self.class.list << self
     self
   end
@@ -32,9 +32,9 @@ class Bullet < Sprite
     attr_reader :list
   end
 
-  def self.update(tick, _player)
+  def self.update
     @list.each do |bullet|
-      bullet.data.proc_lived.call(bullet, tick, _player)
+      bullet.data.proc_lived.call(bullet)
 
       if !((0..Window.width).include?(bullet.x) &&
          (0..Window.height).include?(bullet.y))
