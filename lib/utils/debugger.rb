@@ -49,33 +49,61 @@ class Debugger
     @_list = []
   end
 
-  # arg: sprite : Sprite Object | [ Sprite Object ]
-  def self.draw_collision(sprite)
-    if sprite.class < Sprite
-      sprite = [sprite]
-    elsif sprite.class == Array
+  # arg: sprites : Sprite Object | [ Sprite Object ]
+  def self.draw_collision(sprites)
+    if sprites.class < Sprite
+      sprites = [sprites]
+    elsif sprites.class == Array
     else
-      raise ArgumentError, "please (Sprite or [Sprite])"
+      raise ArgumentError, "sprites please : (Sprite | Array[Sprite])"
     end
-    sprite.each do |sp|
+    sprites.each do |sp|
       next unless sp.collision_enable
-
-      # TODO Sprite#collision_sync の対応
-
       col = sp.collision
-      if col.nil? # box
-        Window.draw_box(sp.x, sp.y, sp.x + sp.image.width, sp.y + sp.image.height, @color)
-      elsif col.length == 2 # dot
-        Window.draw_pixel(sp.x + col[0], sp.y + col[1], @color)
-      elsif col.length == 3 # circle
-        Window.draw_circle(sp.x + col[0], sp.y + col[1], col[2], @color)
-      elsif col.length == 4 # box
-        Window.draw_box(sp.x + col[0], sp.y + col[1],
-                        sp.x + col[2], sp.y + col[3], @color)
-      elsif col.length == 6 # triangle
-        Window.draw_triangle(sp.x + col[0], sp.y + col[1],
-                             sp.x + col[2], sp.y + col[3],
-                             sp.x + col[4], sp.y + col[5], @color)
+
+      # スケールやアングルが変わっている場合
+      if sp.angle != 0 || sp.scale_x != 1 || sp.scale_y != 1
+        img = Image.new(sp.image.width, sp.image.height)
+        if col.nil? # box
+          img.box(0, 0, sp.image.width, sp.image.height, @color)
+        elsif col.length == 2 # dot
+          img.pixel(*col, @color)
+        elsif col.length == 3 # circle
+          img.circle(*col, @color)
+        elsif col.length == 4 # box
+          img.box(*col, @color)
+        elsif col.length == 6 # triangle
+          img.triangle(*col, @color)
+        end
+        Window.draw_ex(sp.x, sp.y, img,
+                       scale_x: sp.scale_x,
+                       scale_y: sp.scale_y,
+                       center_x: sp.center_x,
+                       center_y: sp.center_y,
+                       angle: sp.angle)
+      else
+        if col.nil? # box
+          Window.draw_box(sp.x, sp.y, sp.x + sp.image.width, sp.y + sp.image.height, @color)
+          next
+        else
+          new_col = col.map.with_index do |_col, index|
+            if index % 2 == 0
+              sp.x + _col
+            else
+              sp.y + _col
+            end
+          end
+        end
+
+        if col.length == 2 # dot
+          Window.draw_pixel(*new_col, @color)
+        elsif col.length == 3 # circle
+          Window.draw_circle(sp.x + col[0], sp.y + col[1], col[2], @color)
+        elsif col.length == 4 # box
+          Window.draw_box(*new_col, @color)
+        elsif col.length == 6 # triangle
+          Window.draw_triangle(*new_col, @color)
+        end
       end
     end
   end

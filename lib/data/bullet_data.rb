@@ -39,7 +39,6 @@ class BulletData
     ).when_spawned do |bullet, tick, player|
       bullet.center_x = 64
       bullet.center_y = 128
-      bullet.collision_sync = true
     end
     .when_lived do |bullet, tick, player|
       passed_tick = tick - bullet.spawn_tick
