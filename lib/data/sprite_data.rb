@@ -1,4 +1,4 @@
-class DataTemplate
+class ISpriteData
   attr_accessor :spell, :var
   attr_reader :image, :anime, :proc_spawned, :proc_lived
 

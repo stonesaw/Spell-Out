@@ -7,10 +7,10 @@ class Title < Scene
     @bgm = Sound.new("#{$PATH}/assets/sound/38-5.wav") # 62.118 sec
     @se_enter_play = Sound.new("#{$PATH}/assets/sound/se_retro03.wav")
     @se_cursor = Sound.new("#{$PATH}/assets/sound/se_system27.wav")
-    play   = @font.get_width('PLAY')
+    play = @font.get_width('PLAY')
     credit = @font.get_width('CREDIT')
     exit_  = @font.get_width('EXIT')
-    @section_play   = Sprite.new(900, 500, Image.new(play + 10,   90, C_CYAN))
+    @section_play = Sprite.new(900, 500, Image.new(play + 10, 90, C_CYAN))
     @section_credit = Sprite.new(850, 600, Image.new(credit + 10, 90, C_CYAN))
     @section_exit   = Sprite.new(800, 700, Image.new(exit_ + 10,  90, C_CYAN))
     @cursor = -99
@@ -64,10 +64,10 @@ class Title < Scene
     if Input.mouse_down?(0) || Input.key_down?(K_RETURN) || Input.pad_down?(P_BUTTON0)
       if @section_play.on_mouse? || @cursor == 0
         @se_enter_play.play
-        SceneManager.next(:play, loading: true)
+        SceneManager.next(:play, '1-1', loading: true)
         return
       elsif @section_credit.on_mouse? || @cursor == 1
-        SceneManager.next(:play, loading: true)
+        SceneManager.next(:play, '1-1', loading: true)
         return
       elsif @section_exit.on_mouse? || @cursor == 2
         Window.close
@@ -85,7 +85,7 @@ class Title < Scene
       y = @mini_char.y + @mini_char.image.height * 0.6
       spell = @_spell_color.keys[@spell_count]
       img = Image.new(10, 10, @_spell_color.values[@spell_count])
-      @bullets << {:"#{spell}" => Sprite.new(x, y, img)}
+      @bullets << { :"#{spell}" => Sprite.new(x, y, img) }
       @spell_count = (@spell_count + 1) % 5
     end
     @bullets.each do |b|
@@ -123,13 +123,12 @@ class Title < Scene
     @bgm.dispose
   end
 
-
   def self._draw_section(sp, cursor, section_name)
     args = sp.x + 10, sp.y - 60, section_name.upcase, @font
     if sp.on_mouse? || @cursor == cursor
       Window.draw_font(*args)
       Window.draw_line(sp.x, sp.y + sp.image.height,
-                        sp.x + sp.image.width, sp.y + sp.image.height, C_WHITE)
+                       sp.x + sp.image.width, sp.y + sp.image.height, C_WHITE)
     else
       Window.draw_font(*args, color: [200, 255, 255, 255])
     end

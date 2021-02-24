@@ -14,7 +14,7 @@ class Ranking < Scene
     t = Time.now
     @user_db[user_name] = {
       'score' => score.to_i,
-      'time' => "#{t.year}/#{t.month}/#{t.day}' '#{t.hour}:#{t.min == 0 ? '00' : t.min}"
+      'time' => "#{t.year}/#{t.month}/#{t.day}' '#{t.hour}:#{t.min == 0 ? '00' : t.min}",
     }
 
     @user_db = @user_db.sort_by {|data| [-data[1]['score'], data[0].upcase] }

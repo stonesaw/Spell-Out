@@ -1,10 +1,9 @@
 # Scene - Play
 
 class Play < Scene
-  def self.new
+  def self.new(stage)
     Debugger.color = [240, 240, 240]
-    Window.bgcolor = [142, 199, 95]
-    @font      = Font.new(80, 'Poco')
+    @font = Font.new(80, 'Poco')
     @font_mini = Font.new(50, 'Poco')
     @spell_icon = Sprite.new(1000, 600, Image.new(64, 64, C_WHITE))
     # @heart_icon = Image.load("#{$PATH}/assets/image/icon_Heart.png")
@@ -16,15 +15,19 @@ class Play < Scene
     )
     r = $player_images[0][0].width / 2
     Input.set_mouse_pos(@player.x * Window.scale + r, @player.y * Window.scale + r)
-    Bullet.reset
-    Enemy.reset
-    EnemiesData.new
-    BulletData.new
+    EnemiesData.load
+    BulletData.load
     EnemySpawnSystem.new
-
+    p stage
+    @stage = StageData.load(stage)
     @tick = 0
     $score = 0
-    # Map._load
+
+    @book_anime = Image.load_tiles("#{$PATH}/assets/image/book_anime.png", 16, 1)
+    @book = Sprite.new(10, 800, @book_anime[0])
+    @book_anime_count = 0
+
+    Window.bgcolor = [142, 199, 95]
   end
 
   def self.set_music
@@ -61,6 +64,16 @@ class Play < Scene
     end
     Sprite.clean(Enemy.list)
 
+    # 仮
+    if @book_anime_count != 0
+      @book_anime_count += 1
+      @book_anime_count = @book_anime_count % (@book_anime.length * 3)
+    end
+    if Input.key_push?(K_Z)
+      @book_anime_count += 1
+    end
+    @book.image = @book_anime[@book_anime_count / 3]
+
     @tick += 1
   end
 
@@ -69,9 +82,9 @@ class Play < Scene
     Debugger.puts("tick : #{@tick}")
     Debugger.puts("score : #{$score}")
     Debugger.puts("my life : #{@player.life}")
-    Debugger.puts("player direction : #{@player.direction.to_i}")
-    Debugger.puts("bullet : #{Bullet.list.length}")
-    Debugger.puts("enemy : #{Enemy.list.length}")
+    Debugger.puts("player direction : #{@player.direction.to_i}°")
+    Debugger.puts("bullet length : #{Bullet.list.length}")
+    Debugger.puts("enemy length: #{Enemy.list.length}")
 
     # @bg.draw
     Bullet.draw
@@ -80,6 +93,9 @@ class Play < Scene
     @player.draw
     Bullet.draw_after
     HPBar.draw
+
+    # 仮
+    @book.draw
 
     # @player.life.times do |i|
     #   Window.draw(14 + i * (@heart_icon.width + 4), 14, @heart_icon)
@@ -109,7 +125,8 @@ class Play < Scene
   end
 
   def self.last
-    $debug_mode = false
+    Bullet.reset
+    Enemy.reset
   end
 
   def self._to_scene_game_over

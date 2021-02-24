@@ -1,4 +1,4 @@
-class IEnemyData < DataTemplate
+class IEnemyData < ISpriteData
   attr_accessor :name, :hp, :max_hp, :score, :direction, :exp
   attr_reader :proc_dead
 
@@ -27,39 +27,38 @@ class EnemiesData
   end
 
   # call this method : Play scene initialize
-  def initialize
-    EnemiesData.list = {
-      slime1: slime1,
-      slime2: slime2,
-      golem: golem,
-    }
+  def self.load
+    slime1
+    slime2
+    golem
   end
 
-  private
-
-  def slime1
+  def self.slime1
     slime_img = Image.load_tiles("#{$PATH}/assets/image/slime.png", 3, 1)
-    IEnemyData.new('水スライム', :water, 100, 10, 10, slime_img[0], anime: slime_img).
-      when_spawned do |enemy, tick, player|
+    @list[:slime1] = IEnemyData.new('水スライム', :water, 100, 10, 10, slime_img[0], anime: slime_img)
+    
+    @list[:slime1].when_spawned do |enemy, tick, player|
       enemy.add_hp_bar(x: 0.7, y: 0.7)
       enemy.collision = [64, 100, 27]
-    end.
-      when_lived do |enemy, tick, player|
+    end
+    @list[:slime1].when_lived do |enemy, tick, player|
       passed_tick = tick - enemy.spawn_tick
       enemy.y += 4
       enemy.anime_next if passed_tick % 10 == 0
     end
   end
 
-  def slime2
+  def self.slime2
     slime2_img = Image.load_tiles("#{$PATH}/assets/image/slime2.png", 3, 1)
-    IEnemyData.new('風スライム', :wind, 100, 10, 10, slime2_img[0], anime: slime2_img).
-      when_spawned do |enemy, tick, player|
+    @list[:slime2] = IEnemyData.new('風スライム', :wind, 100, 10, 10, slime2_img[0], anime: slime2_img)
+    
+    @list[:slime2].when_spawned do |enemy, tick, player|
       enemy.add_hp_bar(x: 0.7, y: 0.7)
       enemy.collision = [64, 100, 27]
       enemy.data.var[:speed] = 2
-    end.
-      when_lived do |enemy, tick, player|
+    end
+    
+    @list[:slime2].when_lived do |enemy, tick, player|
       passed_tick = tick - enemy.spawn_tick
 
       if passed_tick <= 100
@@ -80,8 +79,9 @@ class EnemiesData
         enemy.calc_hp(bullets[0])
         Bullet.list.delete(bullets[0]) # TODO: Bullet の削除 : bullet_data に移動
       end
-    end.
-      when_dead do |enemy, tick, player|
+    end
+
+    @list[:slime2].when_dead do |enemy, tick, player|
       SE.play(:retro04)
       # $se_retro04.set_volume(255 * $volume)
       $score += enemy.data.score
@@ -92,14 +92,16 @@ class EnemiesData
     end
   end
 
-  def golem
+  def self.golem
     _golem_img = Image.load_tiles("#{$PATH}/assets/image/Golem_stone.png", 6, 4)
     golem_img = [_golem_img[0], _golem_img[1], _golem_img[2]]
-    IEnemyData.new('ゴーレム', :dark, 500, 1000, 100, golem_img[0], anime: golem_img)
-    .when_spawned do |enemy, tick, player|
+    @list[:golem] = IEnemyData.new('ゴーレム', :dark, 500, 1000, 100, golem_img[0], anime: golem_img)
+    
+    @list[:golem].when_spawned do |enemy, tick, player|
       enemy.add_hp_bar
     end
-    .when_lived do |enemy, tick, player|
+
+    @list[:golem].when_lived do |enemy, tick, player|
       passed_tick = tick - enemy.spawn_tick
       enemy.y += 2
 
@@ -114,7 +116,8 @@ class EnemiesData
         Bullet.list.delete(bullets[0]) # TODO: Bullet の削除 : bullet_data に移動
       end
     end
-    .when_dead do |enemy, tick, player|
+
+    @list[:golem].when_dead do |enemy, tick, player|
       SE.play(:retro04)
       # $se_retro04.set_volume(255 * $volume)
       $score += enemy.data.score

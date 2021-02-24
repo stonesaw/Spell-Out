@@ -2,6 +2,16 @@ class Enemy < Sprite
   attr_reader :data, :spawn_tick
   attr_accessor :hp_bar, :hp_bar_base
 
+  class << self
+    attr_accessor :list
+    attr_reader :_spell_match, :_spell_miss
+  end
+
+  def self.reset
+    @list = []
+  end
+
+
   def initialize(data, now_tick, x, y, player)
     @data = data.dup
     super
@@ -85,14 +95,6 @@ class Enemy < Sprite
     [:holy, :dark],
     [:dark, :holy],
   ]
-  @_spell_miss = @_spell_match.map.with_index { |spells, i| spells.reverse if i < 3 }
+  @_spell_miss = @_spell_match.map.with_index {|spells, i| spells.reverse if i < 3 }
   @_spell_miss.compact!
-  class << self
-    attr_accessor :list
-    attr_reader :_spell_match, :_spell_miss
-
-    def reset
-      @list = []
-    end
-  end
 end

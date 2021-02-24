@@ -149,6 +149,4 @@ class Player < Sprite
       @cool_time = 100
     end
   end
-
-
 end

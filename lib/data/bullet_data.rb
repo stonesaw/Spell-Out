@@ -1,5 +1,5 @@
 # BulletDataのインターフェース
-class IBulletData < DataTemplate
+class IBulletData < ISpriteData
   attr_accessor :attack
   attr_reader :is_draw_after
 
@@ -25,7 +25,7 @@ class BulletData
     attr_reader :list, :charge_tick
   end
 
-  def self.new
+  def self.load
     _list_add_level1_bullet
 
     fire_img = []
@@ -34,7 +34,7 @@ class BulletData
         .set_color_key(C_WHITE)
     end
 
-    BulletData.list[:level2_fire] = IBulletData.new(
+    @list[:level2_fire] = IBulletData.new(
       :fire, 50, fire_img[0], anime: fire_img
     ).when_spawned do |bullet, tick, player|
       bullet.center_x = 64
