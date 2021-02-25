@@ -76,6 +76,7 @@ class Play < Scene
       @book_anime_count += 1
     end
     @book.image = @book_anime[@book_anime_count / 3]
+    p @player.spell.to_s
 
     @tick += 1
   end
@@ -125,6 +126,20 @@ class Play < Scene
         Enemy.list + [@player] + Bullet.list
       )
     end
+
+    case @player.spell.to_s
+    when "fire"
+      Window.draw_font(60, 820, @player.spell.to_s, @font, color: [255, 0, 0])
+    when "dark"
+      Window.draw_font(60, 820, @player.spell.to_s, @font, color: [121,73,173])
+    when "holy"
+      Window.draw_font(60, 820, @player.spell.to_s, @font, color: C_BLACK)
+    when "wind"
+      Window.draw_font(60, 820, @player.spell.to_s, @font, color: [23,155,123])
+    when "water"
+      Window.draw_font(40, 820, @player.spell.to_s, @font, color: [55,183,130])
+    end
+
   end
 
   def self.last
