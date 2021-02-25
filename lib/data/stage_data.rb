@@ -32,22 +32,23 @@ class StageData
     attr_accessor :list
   end
 
-  def self.load(stage_str)
-    if /(?<chapter>\d)-(?<section>\d)/ =~ stage_str
+  def self.load(stage_name)
+    if /(?<chapter>\d)-(?<section>\d)/ =~ stage_name
       send(:"load_#{chapter}_#{section}")
     else
-      raise ArgumentError, "wrong stage_str (#{stage_str})"
+      raise ArgumentError, "wrong stage_name (#{stage_name})"
     end
   end
 
-  # return IStageData
+  # return waves ( Array[IWaveData] )
   def self.load_1_1
     bg_gray = Image.new(Window.width, Window.height, [140, 140, 140])
     waves = []
     waves << IWaveData.new(bg_gray, []).
       when_begin do |stage|
         Debugger.puts 'wave 1/3 begin!'
-        Enemy.new(EnemiesData.list[:slime2], Play.tick, 100, 100, Play.player)
+        # Enemy.new(SlimeWind.new, 100, 100)
+        # Enemy.new(SlimeWind.new, 700, 100)
       end.
       when_update do |stage|
         Debugger.puts 'wave 1/3 update!'
@@ -58,7 +59,8 @@ class StageData
 
     waves << IWaveData.new(bg_gray, []).
       when_begin do |stage|
-        Debugger.puts 'wave 2/3 begin!'
+        # Debugger.puts 'wave 2/3 begin!'
+        Enemy.new(SlimeWind.new, 100, 100)
       end.
       when_update do |stage|
         Debugger.puts 'wave 2/3 update!'
@@ -66,8 +68,5 @@ class StageData
       when_end do |stage|
         Debugger.puts 'wave 2/3 end!'
       end
-
-    # return
-    Stage.new('1-1', waves)
   end
 end

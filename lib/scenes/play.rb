@@ -6,7 +6,7 @@ class Play < Scene
     attr_accessor :player, :stage
   end
 
-  def self.new(stage)
+  def self.new(stage_name)
     Debugger.color = [240, 240, 240]
     @tick = 0
     @font = Font.new(80, 'Poco')
@@ -25,10 +25,8 @@ class Play < Scene
     )
     r = @player.image.width / 2
     Input.set_mouse_pos(@player.x * Window.scale + r, @player.y * Window.scale + r)
-    EnemiesData.load
     BulletData.load
-    EnemySpawnSystem.new
-    @stage = StageData.load(stage)
+    @stage = Stage.new(stage_name, StageData.load(stage_name))
     $score = 0
 
     @book_anime = Image.load_tiles("#{$PATH}/assets/image/book_anime.png", 16, 1)
@@ -51,19 +49,14 @@ class Play < Scene
 
     @stage.update
     if @stage.is_clear
-      SceneManager.next(:title)
+      _to_scene_game_clear
+      # SceneManager.next(:title)
     end
-
-    # spown enemy
-    # EnemySpawnSystem.update(@tick, @player)
 
     # update
     @player.update
 
     _to_scene_game_over if @player.life <= 0
-    if EnemySpawnSystem.is_boss && Enemy.list.empty?
-      _to_scene_game_clear
-    end
 
     Bullet.update
     # Enemies.update(:any, @tick, @player)
@@ -170,6 +163,6 @@ class Play < Scene
       cover.draw
       i += 1
     end
-    SceneManager.next(:game_over, :game_clear)
+    SceneManager.next(:game_over, :game_clear, loading: true)
   end
 end

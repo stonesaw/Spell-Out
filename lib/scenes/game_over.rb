@@ -1,26 +1,21 @@
 # Scene - GameOver
 
 class GameOver < Scene
-  @font_big   = Font.new(140, 'Poco')
-  @font_nomal = Font.new(90, 'Poco')
-  @font_mini  = Font.new(50, 'Poco')
+  def self.new(symbol)
+    @font_big   = Font.new(140, 'Poco')
+    @font_nomal = Font.new(90, 'Poco')
+    @font_mini  = Font.new(50, 'Poco')
 
-  @title_width = @font_big.get_width('Game Over')
-  @score_is    = @font_nomal.get_width('score : ')
-  @tb = TextBox.new(Window.width * 0.3, Window.height * 0.7, Window.width * 0.4, 100,
-                    font_name: 'Poco', font_size: 90, font_oy: - 16, cursor_scale: 0.9)
+    @title_width = @font_big.get_width('Game Over')
+    @score_is    = @font_nomal.get_width('score : ')
+    @tb = TextBox.new(Window.width * 0.3, Window.height * 0.7, Window.width * 0.4, 100,
+                      font_name: 'Poco', font_size: 90, font_oy: - 16, cursor_scale: 0.9)
 
-  @alerts = []
-  @alerts_stay_cnt = []
-  @alerts_alpha = []
-
-  class << self
-    attr_accessor :symbol
-  end
-
-  def initialize(symbol)
-    super()
-    self.class.symbol = symbol
+    @alerts = []
+    @alerts_stay_cnt = []
+    @alerts_alpha = []
+    @symbol = symbol
+    Debugger._str = ''
   end
 
   def self.update

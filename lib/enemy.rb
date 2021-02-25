@@ -11,7 +11,7 @@ class Enemy < Sprite
     @list = []
   end
 
-  def initialize(data, now_tick, x, y, player)
+  def initialize(data, x, y)
     @data = data.dup
     super
     self.x = x
@@ -21,16 +21,19 @@ class Enemy < Sprite
     @_anime_count = 0
     # @data.remove_instance_variable(:@image)
     # @data.remove_instance_variable(:@anime)
-    @spawn_tick = now_tick
+    @spawn_tick = Play.tick
 
-    @data.proc_spawned.call(self)
+    # @data.proc_spawned.call(self)
+    @data.spawned(self)
 
     self.class.list << self
   end
 
   def update
-    @data.proc_lived.call(self)
-    @data.proc_dead.call(self) if data.hp <= 0
+    # @data.proc_lived.call(self)
+    # @data.proc_dead.call(self) if data.hp <= 0
+    @data.lived(self)
+    @data.dead(self) if data.hp <= 0
   end
 
   # utils

@@ -24,12 +24,11 @@ require_relative 'lib/utils/se'
 require_relative 'lib/utils/hp_bar'
 require_relative 'lib/utils/text_box'
 require_relative 'lib/utils/seek_bar'
-# require_relative 'lib/map'
 require_relative 'lib/player'
 require_relative 'lib/player_setting'
 require_relative 'lib/bullet'
 require_relative 'lib/enemy'
-require_relative 'lib/enemy_spawn_system'
+# require_relative 'lib/enemy_spawn_system'
 require_relative 'lib/stage'
 require_relative 'lib/data/sprite_data'
 require_relative 'lib/data/enemies_data'
@@ -54,6 +53,7 @@ SceneManager.new({
 
 Window.loop do
   Window.close if Input.key_down?(K_ESCAPE)
+
   Mouse.update
   SceneManager.update
   SceneManager.draw
