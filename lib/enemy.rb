@@ -85,8 +85,8 @@ class Enemy < Sprite
   def add_boss_bar
     HPBar.boss_hp_bar << {
       enemy: self,
-      base: Image.new(image.width * 0.9, image.height * 0.15, [240, 240, 240]),
-      bar: Image.new(image.width * 0.9 - 4, image.height * 0.15 - 4, [124, 224, 43]),
+      base: Image.new(image.width * 0.9, image.height * 0.1, [240, 240, 240]),
+      bar: Image.new(image.width * 0.9 - 4, image.height * 0.1 - 4, [124, 224, 43]),
     }
   end
 

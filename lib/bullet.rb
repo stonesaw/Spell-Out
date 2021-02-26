@@ -2,18 +2,18 @@ class Bullet < Sprite
   attr_accessor :spell, :attack, :anime, :is_anime, :_anime_cnt, :direction
   attr_reader :data, :spawn_tick
 
-  def initialize(player, data, now_tick, x, y, direction)
+  def initialize(data, x, y)
     @data = data.dup
     super
     self.x = x
     self.y = y
     self.image = @data.image
-    @direction = direction
+    @direction = Play.player.direction
     @anime = @data.anime
     @spell = @data.spell
     @attack = @data.attack
     @_anime_cnt = 0
-    @spawn_tick = now_tick
+    @spawn_tick = Play.tick
 
     @data.spawned(self)
     self.class.list << self

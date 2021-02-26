@@ -122,7 +122,7 @@ class Play < Scene
 
     if $debug_mode
       Debugger.draw_collision(
-        Enemy.list + [@player] + Bullet.list
+        Enemy.list + [@player] + Bullet.list + @stage.objects
       )
     end
   end

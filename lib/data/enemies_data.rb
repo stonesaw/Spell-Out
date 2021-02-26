@@ -25,16 +25,14 @@ class Slime < IEnemyData
     enemy.collision = [64, 100, 27]
     enemy.data.var[:speed] = 2
   end
-  
+
   def lived(enemy)
     passed_tick = Play.tick - enemy.spawn_tick
 
-    if passed_tick <= 100
-      distance_x = enemy.x - Play.player.x
-      distance_y = enemy.y - Play.player.y
-      enemy.data.direction = Math.atan2(distance_y, distance_x) * 180.0 / Math::PI
-      enemy.data.direction = 360 + enemy.data.direction if enemy.data.direction < 0
-    end
+    distance_x = enemy.x - Play.player.x
+    distance_y = enemy.y - Play.player.y
+    enemy.data.direction = Math.atan2(distance_y, distance_x) * 180.0 / Math::PI
+    enemy.data.direction = 360 + enemy.data.direction if enemy.data.direction < 0
 
     enemy.x -= enemy.data.var[:speed] * Math.cos(enemy.data.direction * Math::PI / 180.0)
     enemy.y -= enemy.data.var[:speed] * Math.sin(enemy.data.direction * Math::PI / 180.0)

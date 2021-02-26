@@ -29,6 +29,7 @@ class BulletData
     _list_add_level1_bullet
     @list[:level2_fire] = BulletFileLevel2.new
     @list[:level2_wind] = BulletWindLevel2.new
+    @list[:level2_holy] = BulletHolyLevel2.new
   end
 
   def self.spell_and_color
@@ -120,5 +121,45 @@ class BulletWindLevel2 < IBulletData
     bullet._anime_next if passed_tick % 16 == 0
 
     bullet.vanish if passed_tick >= 80
+  end
+end
+
+class BulletHolyLevel2 < IBulletData
+  def self.new
+    super(:holy, 0, Image.new(1, 1))
+  end
+
+  def spawned(bullet)
+    bullet.collision_enable = false
+  end
+
+  def lived(bullet)
+    passed_tick = Play.tick - bullet.spawn_tick
+    if passed_tick % 10 == 0 && (0..50).include?(passed_tick)
+      Bullet.new(BulletHolyLevel2Child.new, Play.player.x, Play.player.y)
+    elsif passed_tick > 50
+      bullet.vanish
+    end
+  end
+end
+
+class BulletHolyLevel2Child < IBulletData
+  def self.new
+    @images ||= [Image.load("#{$PATH}/assets/image/_holy0.png")]
+    super(:holy, 10, @images[0])
+  end
+
+  def spawned(bullet)
+    bullet.data.var[:speed] = 14
+    bullet.data.var[:d] = bullet.direction
+
+    # bullet.x = Play.player.x - 30 + Play.player.image.width  * 0.4  * Math.cos(Play.player.direction * Math::PI / 180.0)
+    # bullet.y = Play.player.y - 50 + Play.player.image.height * 0.35 * Math.sin(Play.player.direction * Math::PI / 180.0)
+    bullet.angle = Play.player.direction + 90
+  end
+
+  def lived(bullet)
+    bullet.x += bullet.data.var[:speed] * Math.cos(bullet.data.var[:d] * Math::PI / 180.0)
+    bullet.y += bullet.data.var[:speed] * Math.sin(bullet.data.var[:d] * Math::PI / 180.0)
   end
 end

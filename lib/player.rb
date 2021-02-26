@@ -139,13 +139,18 @@ class Player < Sprite
     if level == 1
       _x = self.x + (image.width * 0.5)  + image.width  * 0.4 * Math.cos(@direction * Math::PI / 180.0)
       _y = self.y + (image.height * 0.6) + image.height * 0.4 * Math.sin(@direction * Math::PI / 180.0)
-      Bullet.new(self, BulletData.list[:"level1_#{@spell}"], Play.tick, _x, _y, @direction)
+      Bullet.new(BulletData.list[:"level1_#{@spell}"], _x, _y)
     elsif level == 2
-      bullet_name = :"level2_#{@spell}"
-      unless BulletData.list.keys.include?(bullet_name)
-        raise NameError, "BulletData.list undefined :#{bullet_name}"
+      case @spell
+      when :holy
+        Bullet.new(BulletData.list[:level2_holy], self.x, self.y)
+      else
+        bullet_name = :"level2_#{@spell}"
+        unless BulletData.list.keys.include?(bullet_name)
+          raise NameError, "BulletData.list undefined :#{bullet_name}"
+        end
+        Bullet.new(BulletData.list[bullet_name], nil, nil)
       end
-      Bullet.new(self, BulletData.list[bullet_name], Play.tick, nil, nil, @direction)
       @cool_time = 100
     end
   end

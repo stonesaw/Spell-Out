@@ -32,6 +32,15 @@ class Stage
 
   def draw
     Window.draw(0, 0, @wave.bg_image)
+    # Sprite.draw(@wave.field_objects)
+  end
+
+  def objects
+    @wave.field_objects
+  end
+
+  def objects=(item)
+    @wave.field_objects = item
   end
 
   def exists_boss?

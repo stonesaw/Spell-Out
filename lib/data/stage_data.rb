@@ -1,6 +1,6 @@
 class IWaveData
   attr_reader :proc_begin, :proc_update, :proc_end
-  attr_accessor :field_image, :bg_image
+  attr_accessor :field_image, :bg_image, :field_objects
 
   def initialize(bg_image, field_objects)
     @bg_image = bg_image
@@ -43,12 +43,18 @@ class StageData
   # return waves ( Array[IWaveData] )
   def self.load_1_1
     bg_gray = Image.new(Window.width, Window.height, [140, 140, 140])
+    field_objects = []
+    4.times do |y|
+      6.times do |x|
+        field_objects << Sprite.new(140 + 200 * x, 80 + 200 * y, Image.new(50, 50, [50, 50, 50]))
+      end
+    end
     waves = []
-    waves << IWaveData.new(bg_gray, []).
+    waves << IWaveData.new(bg_gray, field_objects).
       when_begin do |stage|
         Debugger.puts 'wave 1/3 begin!'
-        # Enemy.new(SlimeWind.new, 100, 100)
-        # Enemy.new(SlimeWind.new, 700, 100)
+        Enemy.new(SlimeWind.new, 100, 100)
+        Enemy.new(SlimeWind.new, 700, 100)
       end.
       when_update do |stage|
         Debugger.puts 'wave 1/3 update!'
