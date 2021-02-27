@@ -4,7 +4,7 @@ class Bullet < Sprite
 
   def initialize(data, x, y)
     @data = data.clone
-    @data.var = Marshal.load(Marshal.dump(data.var))
+    @data.var = JSON.parse(data.var.to_json)
     super(x, y, @data.image)
     @direction = Play.player.direction
     @anime = @data.anime

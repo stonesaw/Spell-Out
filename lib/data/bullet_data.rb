@@ -42,7 +42,6 @@ class BulletData
     }
   end
 
-
   def self._list_add_level1_bullet
     spell_and_color.each_pair do |spell, color|
       list[:"level1_#{spell}"] = BulletLevel1.new(spell, color)
@@ -74,16 +73,15 @@ class BulletLevel1 < IBulletData
         self_.y -= dy * 0.5
         self_.data.var[:vanish_passed] = 0
         self_.image = Image.new(20, 20)
-        3.times do |i|
-          x = rand(20 - 5)
-          y = rand(20 - 5)
-          self_.image.box_fill(x, y, x + 5, y + 5, C_WHITE)
-        end
       end
     else
       self_.data.var[:vanish_passed] += 1
-      self_.alpha -= 5
-      self_.vanish if self_.alpha <= 10
+      count = self_.data.var[:vanish_passed]
+      self_.image = Image.new(10 + count, 10 + count, C_WHITE)
+      self_.x -= 0.5
+      self_.y -= 0.5
+      self_.alpha -= 7
+      self_.vanish if self_.alpha <= 7
     end
   end
 end
@@ -106,9 +104,10 @@ class BulletFileLevel2 < IBulletData
   def lived(self_)
     passed_tick = Play.tick - self_.spawn_tick
 
-    self_.x = Play.player.x - 30 + Play.player.image.width  * 0.4  * Math.cos(Play.player.direction * Math::PI / 180.0)
-    self_.y = Play.player.y - 50 + Play.player.image.height * 0.35 * Math.sin(Play.player.direction * Math::PI / 180.0)
-    self_.angle = Play.player.direction + 90
+    player = Play.player
+    self_.x = player.x - 30 + player.image.width  * 0.4  * Math.cos(player.direction * Math::PI / 180.0)
+    self_.y = player.y - 50 + player.image.height * 0.35 * Math.sin(player.direction * Math::PI / 180.0)
+    self_.angle = player.direction + 90
     self_.alpha -= 10 if passed_tick >= 80 - 25
 
     self_._anime_next if passed_tick % 16 == 0
@@ -181,8 +180,7 @@ class BulletHolyLevel2Child < IBulletData
     self_.data.var[:speed] = 14
     self_.data.var[:d] = self_.direction
 
-    # self_.x = Play.player.x - 30 + Play.player.image.width  * 0.4  * Math.cos(Play.player.direction * Math::PI / 180.0)
-    # self_.y = Play.player.y - 50 + Play.player.image.height * 0.35 * Math.sin(Play.player.direction * Math::PI / 180.0)
+    # TODO スポーンする位置の調整
     self_.angle = Play.player.direction + 90
   end
 
