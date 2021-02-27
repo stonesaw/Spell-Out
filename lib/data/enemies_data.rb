@@ -15,6 +15,7 @@ class IEnemyData < ISpriteData
   end
 end
 
+# スライム
 class Slime < IEnemyData
   def initialize(name, spell, image, anime: [])
     super(name, spell, 100, 10, 10, image, anime: anime)
@@ -34,8 +35,12 @@ class Slime < IEnemyData
     enemy.data.direction = Math.atan2(distance_y, distance_x) * 180.0 / Math::PI
     enemy.data.direction = 360 + enemy.data.direction if enemy.data.direction < 0
 
-    enemy.x -= enemy.data.var[:speed] * Math.cos(enemy.data.direction * Math::PI / 180.0)
-    enemy.y -= enemy.data.var[:speed] * Math.sin(enemy.data.direction * Math::PI / 180.0)
+    obj = Play.stage.objects
+    enemy.x -= dx = enemy.data.var[:speed] * Math.cos(enemy.data.direction * Math::PI / 180.0)
+    enemy.x += dx * 2 unless enemy.check(obj).empty?
+
+    enemy.y -= dy = enemy.data.var[:speed] * Math.sin(enemy.data.direction * Math::PI / 180.0)
+    enemy.y += dy * 2 unless enemy.check(obj).empty?
 
     enemy.anime_next if passed_tick % 10 == 0
 
@@ -74,6 +79,7 @@ class SlimeWind < Slime
   end
 end
 
+# ゴーレム
 class Golem < IEnemyData
   def initialize
     _golem_img = Image.load_tiles("#{$PATH}/assets/image/Golem_stone.png", 6, 4)

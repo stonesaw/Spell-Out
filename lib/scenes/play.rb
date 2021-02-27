@@ -25,9 +25,10 @@ class Play < Scene
     )
     r = @player.image.width / 2
     Input.set_mouse_pos(@player.x * Window.scale + r, @player.y * Window.scale + r)
+    Bullet.reset
+    Enemy.reset
     BulletData.load
     @stage = Stage.new(stage_name, StageData.load(stage_name))
-    $score = 0
 
     @book_anime = Image.load_tiles("#{$PATH}/assets/image/book_anime.png", 16, 1)
     @book = Sprite.new(10, 800, @book_anime[0])
@@ -59,7 +60,6 @@ class Play < Scene
     _to_scene_game_over if @player.life <= 0
 
     Bullet.update
-    # Enemies.update(:any, @tick, @player)
     i = -1
     Enemy.list.length.times do
       Enemy.list[i].update
@@ -72,11 +72,9 @@ class Play < Scene
       @book_anime_count += 1
       @book_anime_count = @book_anime_count % (@book_anime.length * 3)
     end
-    if Input.key_push?(K_Z)
-      @book_anime_count += 1
-    end
+    @book_anime_count = 1 if @player.is_changed_spell
+
     @book.image = @book_anime[@book_anime_count / 3]
-    p @player.spell.to_s
 
     @tick += 1
   end
@@ -93,26 +91,28 @@ class Play < Scene
     @stage.draw
     Bullet.draw
     Sprite.draw(Enemy.list)
-    # Enemies.draw
     @player.draw
     Bullet.draw_after
     HPBar.draw
 
-    # 仮
     @book.draw
 
-    # @player.life.times do |i|
-    #   Window.draw(14 + i * (@heart_icon.width + 4), 14, @heart_icon)
-    # end
     w = @font.get_width(['SCORE : ', $score].join)
     case @player.life
     when 0..100
-      Window.draw_font(0, 0, @player.life.to_s, @font, color: [255, 0, 0]) # red
+      color = [255, 0, 0]
     when 101..150
-      Window.draw_font(0, 0, @player.life.to_s, @font, color: [255, 210, 0]) # orange
+      color = [255, 210, 0]
     else
-      Window.draw_font(0, 0, @player.life.to_s, @font, color: [70, 130, 180]) # blue
+      color = [70, 130, 180]
     end
+    Window.draw_font(10, -20, @player.life.to_s, @font, color: color)
+    if @stage.now == @stage.waves.length
+      wave = 'CLEAR'
+    else
+      wave = "#{@stage.now + 1} / #{@stage.waves.length}"
+    end
+    Window.draw_font(450, -20, "WAVE : #{wave}", @font)
     Window.draw_font(Window.width - w - 40, -10, "SCORE : #{$score}", @font)
     Window.draw_font(
       Window.width - 200, Window.height - 60,
@@ -127,24 +127,20 @@ class Play < Scene
       )
     end
 
-    case @player.spell.to_s
-    when "fire"
-      Window.draw_font(60, 820, @player.spell.to_s, @font, color: [255, 0, 0])
-    when "dark"
-      Window.draw_font(60, 820, @player.spell.to_s, @font, color: [121,73,173])
-    when "holy"
-      Window.draw_font(60, 820, @player.spell.to_s, @font, color: C_BLACK)
-    when "wind"
-      Window.draw_font(60, 820, @player.spell.to_s, @font, color: [23,155,123])
-    when "water"
-      Window.draw_font(40, 820, @player.spell.to_s, @font, color: [55,183,130])
+    case @player.spell
+    when :fire
+      color = [255, 0, 0]
+    when :dark
+      color = [121, 73, 173]
+    when :holy
+      color = C_BLACK
+    when :wind
+      color = [23, 155, 123]
+    when :water
+      color = [55, 183, 130]
     end
-
-  end
-
-  def self.last
-    Bullet.reset
-    Enemy.reset
+    str = "#{@player.spell}"
+    Window.draw_font(115 - @font.get_width(str) / 2, 820, str, @font, color: color)
   end
 
   def self._to_scene_game_over

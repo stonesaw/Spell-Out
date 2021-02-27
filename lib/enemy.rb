@@ -12,11 +12,9 @@ class Enemy < Sprite
   end
 
   def initialize(data, x, y)
-    @data = data.dup
-    super
-    self.x = x
-    self.y = y
-    self.image = @data.image
+    @data = data.clone
+    @data.var = Marshal.load(Marshal.dump(data.var))
+    super(x, y, @data.image)
     @anime = @data.anime
     @_anime_count = 0
     # @data.remove_instance_variable(:@image)

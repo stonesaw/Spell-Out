@@ -3,11 +3,9 @@ class Bullet < Sprite
   attr_reader :data, :spawn_tick
 
   def initialize(data, x, y)
-    @data = data.dup
-    super
-    self.x = x
-    self.y = y
-    self.image = @data.image
+    @data = data.clone
+    @data.var = Marshal.load(Marshal.dump(data.var))
+    super(x, y, @data.image)
     @direction = Play.player.direction
     @anime = @data.anime
     @spell = @data.spell
@@ -36,8 +34,8 @@ class Bullet < Sprite
     @list.each do |bullet|
       bullet.data.lived(bullet)
 
-      if !((0..Window.width).include?(bullet.x) &&
-         (0..Window.height).include?(bullet.y))
+      if !((-500..Window.width + 500).include?(bullet.x) &&
+           (-500..Window.height + 500).include?(bullet.y))
         bullet.vanish
       end
     end
