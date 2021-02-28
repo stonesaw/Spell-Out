@@ -29,4 +29,11 @@ class Sprite
       (x..x + image.width).include?(Mouse.x) &&
       (y..y + image.height).include?(Mouse.y)
   end
+
+  def mouse_clicked?(mouse_button)
+    return (Input.mouse_down?(mouse_button) &&
+    (self.x..self.x + self.image.width).include?(Mouse.x) &&
+    (self.y..self.y + self.image.height).include?(Mouse.y))
+  end
+
 end
