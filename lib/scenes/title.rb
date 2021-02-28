@@ -69,7 +69,7 @@ class Title < Scene
       @cursor = -99
     end
 
-    if Input.mouse_down?(0) || Input.key_down?(K_RETURN) || Input.pad_down?(P_BUTTON0)
+    if Input.mouse_down?(0) || Input.key_down?(K_RETURN)
       if @section_play.on_mouse? || @cursor == 0
         @se_enter_play.play
         SceneManager.next(:play, '1-1', loading: true)

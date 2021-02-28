@@ -122,15 +122,14 @@ class BulletFileLevel2 < IBulletData
     self_._anime_next if passed_tick % 16 == 0
 
     if self_.data.var[:hit_flag].nil?
-      enemies = self_.check(Enemy.list)
-      unless enemies.empty?
+      unless self_.check(Enemy.list).empty?
         self_.data.var[:hit_flag] = true
       end
     elsif self_.data.var[:hit_flag] == true
       self_.collision_enable = false
       self_.data.var[:hit_flag] = false
-      self_.data.var[:cool_time] = 40
-    else
+      self_.data.var[:cool_time] = 50
+    elsif self_.data.var[:hit_flag] == false
       self_.data.var[:cool_time] -= 1
       if self_.data.var[:cool_time] <= 0
         self_.data.var[:hit_flag] = nil
@@ -210,7 +209,13 @@ class BulletHolyLevel2Child < IBulletData
   end
 
   def lived(self_)
+    self_.vanish if self_.data.var[:vanish]
+
     self_.x += self_.data.var[:speed] * Math.cos(self_.direction * Math::PI / 180.0)
     self_.y += self_.data.var[:speed] * Math.sin(self_.direction * Math::PI / 180.0)
+
+    unless self_.check(Enemy.list).empty?
+      self_.data.var[:vanish] = true
+    end
   end
 end
