@@ -48,11 +48,14 @@ class StageData
 
   # return waves ( Array[IWaveData] )
   def self.load_1_1
-    bg_gray = Image.new(Window.width, Window.height, [140, 140, 140])
+    bg_gray = Image.new(Window.width, Window.height, [142, 199, 95])
     field_objects = []
-    3.times do |y|
-      4.times do |x|
-        field_objects << Sprite.new(140 + 300 * x, 210 + 250 * y, Image.new(50, 50, [50, 50, 50]))
+    2.times do |y|
+      2.times do |x|
+        w, h = Window.width - 100, Window.height - 100
+        _x = [w * 0.2, w * 0.8]
+        _y = [h * 0.2, h * 0.8]
+        field_objects << Sprite.new(_x[x], _y[y], Image.new(50, 50, [70, 70, 70]))
       end
     end
     waves = []

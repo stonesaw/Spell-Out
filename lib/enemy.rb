@@ -30,8 +30,11 @@ class Enemy < Sprite
   def update
     # @data.proc_lived.call(self)
     # @data.proc_dead.call(self) if data.hp <= 0
-    @data.lived(self)
-    @data.dead(self) if data.hp <= 0
+    if data.hp > 0
+      @data.lived(self)
+    else
+      @data.dead(self)
+    end
   end
 
   # utils

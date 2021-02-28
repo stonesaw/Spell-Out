@@ -48,18 +48,31 @@ class Slime < IEnemyData
     unless bullets.empty?
       SE.play(:slime)
       self_.calc_hp(bullets[0])
-      Bullet.list.delete(bullets[0]) # TODO: Bullet の削除 : bullet_data に移動
+      # Bullet.list.delete(bullets[0]) # TODO: Bullet の削除 : bullet_data に移動
     end
   end
 
   def dead(self_)
-    SE.play(:retro04)
-    # $se_retro04.set_volume(255 * $volume)
-    $score += self_.data.score
-    Play.player.exp += self_.data.exp
-    Play.player.level = Play.player.exp / 50 # TODO: レベルのあげ方
-
-    self_.vanish
+    if self_.data.var[:count].nil?
+      SE.play(:retro04)
+      # $se_retro04.set_volume(255 * $volume)
+      $score += self_.data.score
+      Play.player.exp += self_.data.exp
+      Play.player.level = Play.player.exp / 50 # TODO: レベルのあげ方
+      self_.collision_enable = false
+      self_.data.var[:count] = 0
+      self_.x += 64
+      self_.y += 100
+      self_.image = Image.new(20, 20, C_WHITE)
+    else
+      self_.data.var[:count] += 1
+      count = self_.data.var[:count]
+      self_.image = Image.new(20 + count, 20 + count, C_WHITE)
+      self_.x -= 0.5
+      self_.y -= 0.5
+      self_.alpha -= 7
+      self_.vanish if self_.alpha <= 7
+    end
   end
 end
 
@@ -103,7 +116,7 @@ class Golem < IEnemyData
     unless bullets.empty?
       SE.play(:slime)
       self_.calc_hp(bullets[0])
-      Bullet.list.delete(bullets[0]) # TODO: Bullet の削除 : bullet_data に移動
+      # Bullet.list.delete(bullets[0]) # TODO: Bullet の削除 : bullet_data に移動
     end
   end
 

@@ -9,6 +9,7 @@ class Play < Scene
   def self.new(stage_name)
     Debugger.color = [240, 240, 240]
     @tick = 0
+    @font_big = Font.new(100, 'Poco')
     @font = Font.new(80, 'Poco')
     @font_mini = Font.new(50, 'Poco')
 
@@ -28,11 +29,14 @@ class Play < Scene
     Bullet.reset
     Enemy.reset
     BulletData.load
-    @stage = Stage.new(stage_name, StageData.load(stage_name))
+    @stage_name = stage_name.to_s
+    @stage = Stage.new(stage_name, StageData.load(@stage_name))
 
     @book_anime = Image.load_tiles("#{$PATH}/assets/image/book_anime.png", 16, 1)
     @book = Sprite.new(10, 800, @book_anime[0])
     @book_anime_count = 0
+
+    sleep 1
   end
 
   def self.set_music
@@ -50,14 +54,18 @@ class Play < Scene
 
     @stage.update
     if @stage.is_clear
-      _to_scene_game_clear
-      # SceneManager.next(:title)
+      _window_darken
+      SceneManager.next(:stage_select, @stage_name)
+      # SceneManager.next(:game_over, :game_clear, loading: true)
     end
 
     # update
     @player.update
 
-    _to_scene_game_over if @player.life <= 0
+    if @player.life <= 0
+      _window_darken
+      SceneManager.next(:game_over, nil)
+    end
 
     Bullet.update
     i = -1
@@ -67,7 +75,6 @@ class Play < Scene
     end
     Sprite.clean(Enemy.list)
 
-    # 仮
     if @book_anime_count != 0
       @book_anime_count += 1
       @book_anime_count = @book_anime_count % (@book_anime.length * 3)
@@ -89,15 +96,38 @@ class Play < Scene
     Debugger.puts("enemy length: #{Enemy.list.length}")
 
     @stage.draw
-    Bullet.draw
     Sprite.draw(Enemy.list)
+    Bullet.draw
     @player.draw
     Bullet.draw_after
     HPBar.draw
 
-    @book.draw
+    _draw_book
+    _draw_ui
 
-    w = @font.get_width(['SCORE : ', $score].join)
+    if $debug_mode
+      Debugger.draw_collision(
+        Enemy.list + [@player] + Bullet.list + @stage.objects
+      )
+    end
+  end
+
+  def self._draw_book
+    @book.draw
+    case @player.spell
+    when :wind
+      color = [20, 217, 105]
+    when :holy
+      color = C_BLACK
+    else
+      color = BulletData.spell_and_color[@player.spell]
+    end
+    str = "#{@player.spell}".upcase
+    Window.draw_font(115 - @font.get_width(str) / 2, 820, str, @font, color: color)
+  end
+  private_class_method :_draw_book
+
+  def self._draw_ui
     case @player.life
     when 0..100
       color = [255, 0, 0]
@@ -106,44 +136,26 @@ class Play < Scene
     else
       color = [70, 130, 180]
     end
-    Window.draw_font(10, -20, @player.life.to_s, @font, color: color)
+    Window.draw_font(10, -20, "LIFE : #{@player.life}", @font, color: color)
     if @stage.now == @stage.waves.length
       wave = 'CLEAR'
     else
       wave = "#{@stage.now + 1} / #{@stage.waves.length}"
     end
-    Window.draw_font(450, -20, "WAVE : #{wave}", @font)
-    Window.draw_font(Window.width - w - 40, -10, "SCORE : #{$score}", @font)
+    x = (Window.width - @font_big.get_width("WAVE : #{wave}")) * 0.5
+    Window.draw_font(x, -20, "WAVE : #{wave}", @font_big)
+    w = @font.get_width(['SCORE : ', $score].join)
+    Window.draw_font(Window.width - w - 40, -20, "SCORE : #{$score}", @font)
     Window.draw_font(
       Window.width - 200, Window.height - 60,
       "<FPS : #{Window.real_fps}>", @font_mini,
       color: [230, 230, 230]
     )
-    Window.draw_font(Window.width - w - 40, 30, "LEVEL: #{@player.level}", @font)
-
-    if $debug_mode
-      Debugger.draw_collision(
-        Enemy.list + [@player] + Bullet.list + @stage.objects
-      )
-    end
-
-    case @player.spell
-    when :fire
-      color = [255, 0, 0]
-    when :dark
-      color = [121, 73, 173]
-    when :holy
-      color = C_BLACK
-    when :wind
-      color = [23, 155, 123]
-    when :water
-      color = [55, 183, 130]
-    end
-    str = "#{@player.spell}"
-    Window.draw_font(115 - @font.get_width(str) / 2, 820, str, @font, color: color)
+    # Window.draw_font(Window.width - w - 40, 20, "LEVEL : #{@player.level}", @font)
   end
+  private_class_method :_draw_ui
 
-  def self._to_scene_game_over
+  def self._window_darken
     cover = Sprite.new(0, 0, Image.new(Window.width, Window.height, C_BLACK))
     cover.alpha = 0
     @player.alpha = 255
@@ -157,23 +169,6 @@ class Play < Scene
       cover.draw
       i += 1
     end
-    SceneManager.next(:game_over, nil)
   end
-
-  def self._to_scene_game_clear
-    cover = Sprite.new(0, 0, Image.new(Window.width, Window.height, C_BLACK))
-    cover.alpha = 0
-    @player.alpha = 255
-    i = 0
-    loop do
-      Window.update
-      cover.alpha += 15 if i % 60 == 0
-      break if cover.alpha > 255
-
-      Play.draw
-      cover.draw
-      i += 1
-    end
-    SceneManager.next(:game_over, :game_clear, loading: true)
-  end
+  private_class_method :_window_darken
 end

@@ -18,14 +18,14 @@ class Player < Sprite
     @level = 1
     @exp = 0
     @speed = 4
-    @direction = 0 # キャラクターの向いている方向 (画像の角度ではない)
+    @direction = -90 # キャラクターの向いている方向 (画像の角度ではない)
     @cool_time = 0
     @is_changed_spell = false
 
     @bullet_count = 0 # バレット 自動発射用のカウント変数
     @anime_count = 0
     @_mouse_down_count = 0
-    @_old_spell_num = nil
+    @_old_spell_num = @spell_num
     @hit_tick = 0
     @is_hit = false
     @charge_percent = 0.0

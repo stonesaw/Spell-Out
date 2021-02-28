@@ -62,13 +62,22 @@ class BulletLevel1 < IBulletData
   end
 
   def lived(self_)
+    if self_.data.var[:next_vanish]
+      self_.collision_enable = false
+      self_.data.var[:next_vanish] = false
+    end
+
     if self_.data.var[:vanish_passed].nil?
       self_.x += dx = self_.data.var[:speed] * Math.cos(self_.direction * Math::PI / 180.0)
       self_.y += dy = self_.data.var[:speed] * Math.sin(self_.direction * Math::PI / 180.0)
 
-      obj = self_.check(Play.stage.objects)
-      unless obj.empty?
-        self_.collision_enable = false
+      obj, enemies = self_.check(Play.stage.objects), self_.check(Enemy.list)
+      if !obj.empty? || !enemies.empty?
+        if !obj.empty?
+          self_.collision_enable = false
+        elsif !enemies.empty?
+          self_.data.var[:next_vanish] = true
+        end
         self_.x -= dx * 0.5
         self_.y -= dy * 0.5
         self_.data.var[:vanish_passed] = 0
@@ -80,8 +89,8 @@ class BulletLevel1 < IBulletData
       self_.image = Image.new(10 + count, 10 + count, C_WHITE)
       self_.x -= 0.5
       self_.y -= 0.5
-      self_.alpha -= 7
-      self_.vanish if self_.alpha <= 7
+      self_.alpha -= 15
+      self_.vanish if self_.alpha <= 15
     end
   end
 end
@@ -111,6 +120,23 @@ class BulletFileLevel2 < IBulletData
     self_.alpha -= 10 if passed_tick >= 80 - 25
 
     self_._anime_next if passed_tick % 16 == 0
+
+    if self_.data.var[:hit_flag].nil?
+      enemies = self_.check(Enemy.list)
+      unless enemies.empty?
+        self_.data.var[:hit_flag] = true
+      end
+    elsif self_.data.var[:hit_flag] == true
+      self_.collision_enable = false
+      self_.data.var[:hit_flag] = false
+      self_.data.var[:cool_time] = 40
+    else
+      self_.data.var[:cool_time] -= 1
+      if self_.data.var[:cool_time] <= 0
+        self_.data.var[:hit_flag] = nil
+        self_.collision_enable = true
+      end
+    end
 
     self_.vanish if passed_tick >= 80
   end
@@ -178,14 +204,13 @@ class BulletHolyLevel2Child < IBulletData
 
   def spawned(self_)
     self_.data.var[:speed] = 14
-    self_.data.var[:d] = self_.direction
 
     # TODO スポーンする位置の調整
     self_.angle = Play.player.direction + 90
   end
 
   def lived(self_)
-    self_.x += self_.data.var[:speed] * Math.cos(self_.data.var[:d] * Math::PI / 180.0)
-    self_.y += self_.data.var[:speed] * Math.sin(self_.data.var[:d] * Math::PI / 180.0)
+    self_.x += self_.data.var[:speed] * Math.cos(self_.direction * Math::PI / 180.0)
+    self_.y += self_.data.var[:speed] * Math.sin(self_.direction * Math::PI / 180.0)
   end
 end
