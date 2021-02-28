@@ -18,7 +18,7 @@ class Menu < Scene
     @tab_heads = []
     font = Font.new(42)
     @tab_list.each_with_index do |str, i|
-      img = Image.new(200, 50).draw_font(0, 0, str, font)
+      img = Image.new(200, 50, C_CYAN).draw_font(0, 0, str, font)
       @tab_heads << Sprite.new(50 + i * 200, 50, img)
     end
   end
@@ -26,8 +26,12 @@ class Menu < Scene
   def self.update
     Input.mouse_enable = true
     SceneManager.next(:play, is_init: false) if Input.key_release?(K_TAB)
-    # PlayerSetting.auto_attack = true if @button_on.on_mouse? && Input.mouse_push?(0)
-    # PlayerSetting.auto_attack = false if @button_off.on_mouse? && Input.mouse_push?(0)
+    # Debugger.puts("#{Mouse.y},#{Mouse.x}")
+    @tab_list.length do |i|
+      Debugger.puts("#{Mouse.y},#{Mouse.x}") if @tab_heads[i].mouse_clicked?(0)
+    end
+    # PlayerSetting.auto_attack = true if .on_mouse? && Input.mouse_push?(0)
+    # PlayerSetting.auto_attack = false if @.on_mouse? && Input.mouse_push?(0)
     @bgm_seek_bar.update
     @se_seek_bar.update
     BGM.volume = @bgm_seek_bar.percent
