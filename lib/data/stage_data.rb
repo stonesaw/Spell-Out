@@ -78,4 +78,33 @@ class StageData
         Enemy.new(SlimeWind.new, 700, 100)
       end
   end
+
+  
+  def self.load_1_2
+    bg_gray = Image.new(Window.width, Window.height, [142, 199, 95])
+    field_objects = []
+    2.times do |y|
+      2.times do |x|
+        w, h = Window.width - 100, Window.height - 100
+        _x = [w * 0.2, w * 0.8]
+        _y = [h * 0.2, h * 0.8]
+        field_objects << Sprite.new(_x[x], _y[y], Image.new(80, 50, [70, 70, 70]))
+      end
+    end
+    waves = []
+    waves << IWaveData.new(bg_gray, field_objects).
+      when_begin do |wave|
+        Enemy.new(SlimeWind.new, 300, 110)
+        Enemy.new(SlimeWind.new, 900, 350)
+        Enemy.new(SlimeWind.new, 900, 350)
+      end.
+      when_update do |wave|
+      end
+    waves << IWaveData.new(bg_gray, []).
+      when_begin do |wave|
+        # Debugger.puts 'wave 2/3 begin!'
+        Enemy.new(SlimeWind.new, 100, 100)
+      end
+  end
+
 end
