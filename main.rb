@@ -15,6 +15,7 @@ Font.install("#{$PATH}/assets/font/Poco.ttf")
 Font.install("#{$PATH}/assets/font/misaki_gothic.ttf")
 
 $debug_mode = ARGV.include?('debug') || ARGV.include?('-d')
+$score = 0
 
 require_relative 'lib/utils/wrapper'
 require_relative 'lib/utils/scene_manager'
@@ -36,6 +37,7 @@ require_relative 'lib/data/bullet_data'
 require_relative 'lib/data/stage_data'
 require_relative 'lib/scenes/loading'
 require_relative 'lib/scenes/title'
+require_relative 'lib/scenes/stage_select'
 require_relative 'lib/scenes/play'
 require_relative 'lib/scenes/menu'
 require_relative 'lib/scenes/game_over'
@@ -45,6 +47,7 @@ Debugger.new(font_size: 48)
 
 SceneManager.new({
   title: Title,
+  stage_select: StageSelect,
   play: Play,
   menu: Menu,
   game_over: GameOver,

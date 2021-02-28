@@ -1,5 +1,6 @@
 class Player < Sprite
   attr_accessor :spell, :max_life, :life, :images, :direction, :level, :exp
+  attr_reader :is_changed_spell
 
   def initialize(spell, x, y, images)
     super
@@ -17,13 +18,14 @@ class Player < Sprite
     @level = 1
     @exp = 0
     @speed = 4
-    @direction = 0 # キャラクターの向いている方向 (画像の角度ではない)
+    @direction = -90 # キャラクターの向いている方向 (画像の角度ではない)
     @cool_time = 0
+    @is_changed_spell = false
 
-    @bullet_count = 0
+    @bullet_count = 0 # バレット 自動発射用のカウント変数
     @anime_count = 0
     @_mouse_down_count = 0
-    @_old_spell_num = nil
+    @_old_spell_num = @spell_num
     @hit_tick = 0
     @is_hit = false
     @charge_percent = 0.0
@@ -49,13 +51,13 @@ class Player < Sprite
       angle = Math.atan2(my - oy, mx - ox) * 180.0 / Math::PI
       angle = 360 + angle if angle < 0
       @direction = angle
-      # obj = Bullet.list + Enemy.list
-      # obj.each do |o|
-      #   o.x -= @speed * Math.cos(@direction * Math::PI / 180.0)
-      #   o.y -= @speed * Math.sin(@direction * Math::PI / 180.0)
-      # end
-      self.x += @speed * Math.cos(@direction * Math::PI / 180.0)
-      self.y += @speed * Math.sin(@direction * Math::PI / 180.0)
+
+      obj = Play.stage.objects
+      self.x += dx = @speed * Math.cos(@direction * Math::PI / 180.0)
+      self.x -= dx unless check(obj).empty?
+
+      self.y += dy = @speed * Math.sin(@direction * Math::PI / 180.0)
+      self.y -= dy unless check(obj).empty?
     end
 
     self.x = [[0, self.x].max, Window.width - image.width].min
@@ -90,6 +92,7 @@ class Player < Sprite
 
     # Input
     # spell change
+    @is_changed_spell = !(@_old_spell_num == @spell_num)
     @_old_spell_num = @spell_num
     @spell_num -= Input.mouse_wheel_pos / 120
     Input.mouse_wheel_pos = 0
@@ -101,12 +104,7 @@ class Player < Sprite
     @cool_time -= 1
 
     if @cool_time <= 0
-      if !Input.mouse_down?(1) && (Input.key_push?(K_SPACE) || Input.mouse_push?(0))
-        @bullet_count = 0
-        _fire_bullet
-      end
-      if !Input.mouse_down?(1) &&
-        (PlayerSetting.auto_attack || Input.key_down?(K_SPACE) || Input.mouse_down?(0))
+      if !Input.mouse_down?(1)
         @bullet_count += 1
         _fire_bullet if @bullet_count % 14 == 0
       end
@@ -139,13 +137,18 @@ class Player < Sprite
     if level == 1
       _x = self.x + (image.width * 0.5)  + image.width  * 0.4 * Math.cos(@direction * Math::PI / 180.0)
       _y = self.y + (image.height * 0.6) + image.height * 0.4 * Math.sin(@direction * Math::PI / 180.0)
-      Bullet.new(self, BulletData.list[:"level1_#{@spell}"], Play.tick, _x, _y, @direction)
+      Bullet.new(BulletData.list[:"level1_#{@spell}"], _x, _y)
     elsif level == 2
-      bullet_name = :"level2_#{@spell}"
-      unless BulletData.list.keys.include?(bullet_name)
-        raise NameError, "BulletData.list undefined :#{bullet_name}"
+      case @spell
+      when :holy
+        Bullet.new(BulletData.list[:level2_holy], self.x, self.y)
+      else
+        bullet_name = :"level2_#{@spell}"
+        unless BulletData.list.keys.include?(bullet_name)
+          raise NameError, "BulletData.list undefined :#{bullet_name}"
+        end
+        Bullet.new(BulletData.list[bullet_name], nil, nil)
       end
-      Bullet.new(self, BulletData.list[bullet_name], Play.tick, nil, nil, @direction)
       @cool_time = 100
     end
   end

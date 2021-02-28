@@ -10,7 +10,7 @@ class HPBar
 
   def self.draw
     @enemy_hp_bar.each do |me|
-      if !Enemy.list.include?(me[:enemy]) || me[:enemy].vanished?
+      if !Enemy.list.include?(me[:enemy]) || me[:enemy].vanished? || !me[:enemy].collision_enable
         @enemy_hp_bar.delete(me)
       end
       next if me[:enemy].data.hp == me[:enemy].data.max_hp

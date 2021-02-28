@@ -12,11 +12,9 @@ class Enemy < Sprite
   end
 
   def initialize(data, x, y)
-    @data = data.dup
-    super
-    self.x = x
-    self.y = y
-    self.image = @data.image
+    @data = data.clone
+    @data.var = JSON.parse(data.var.to_json)
+    super(x, y, @data.image)
     @anime = @data.anime
     @_anime_count = 0
     # @data.remove_instance_variable(:@image)
@@ -32,8 +30,11 @@ class Enemy < Sprite
   def update
     # @data.proc_lived.call(self)
     # @data.proc_dead.call(self) if data.hp <= 0
-    @data.lived(self)
-    @data.dead(self) if data.hp <= 0
+    if data.hp > 0
+      @data.lived(self)
+    else
+      @data.dead(self)
+    end
   end
 
   # utils
@@ -85,8 +86,8 @@ class Enemy < Sprite
   def add_boss_bar
     HPBar.boss_hp_bar << {
       enemy: self,
-      base: Image.new(image.width * 0.9, image.height * 0.15, [240, 240, 240]),
-      bar: Image.new(image.width * 0.9 - 4, image.height * 0.15 - 4, [124, 224, 43]),
+      base: Image.new(image.width * 0.9, image.height * 0.1, [240, 240, 240]),
+      bar: Image.new(image.width * 0.9 - 4, image.height * 0.1 - 4, [124, 224, 43]),
     }
   end
 

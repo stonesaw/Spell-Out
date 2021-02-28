@@ -2,18 +2,16 @@ class Bullet < Sprite
   attr_accessor :spell, :attack, :anime, :is_anime, :_anime_cnt, :direction
   attr_reader :data, :spawn_tick
 
-  def initialize(player, data, now_tick, x, y, direction)
-    @data = data.dup
-    super
-    self.x = x
-    self.y = y
-    self.image = @data.image
-    @direction = direction
+  def initialize(data, x, y)
+    @data = data.clone
+    @data.var = JSON.parse(data.var.to_json)
+    super(x, y, @data.image)
+    @direction = Play.player.direction
     @anime = @data.anime
     @spell = @data.spell
     @attack = @data.attack
     @_anime_cnt = 0
-    @spawn_tick = now_tick
+    @spawn_tick = Play.tick
 
     @data.spawned(self)
     self.class.list << self
@@ -36,8 +34,8 @@ class Bullet < Sprite
     @list.each do |bullet|
       bullet.data.lived(bullet)
 
-      if !((0..Window.width).include?(bullet.x) &&
-         (0..Window.height).include?(bullet.y))
+      if !((-500..Window.width + 500).include?(bullet.x) &&
+           (-500..Window.height + 500).include?(bullet.y))
         bullet.vanish
       end
     end

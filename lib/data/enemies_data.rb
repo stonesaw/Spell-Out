@@ -11,52 +11,68 @@ class IEnemyData < ISpriteData
     @direction = 0
   end
 
-  def dead(enemy)
+  def dead(self_)
   end
 end
 
+# スライム
 class Slime < IEnemyData
   def initialize(name, spell, image, anime: [])
     super(name, spell, 100, 10, 10, image, anime: anime)
   end
 
-  def spawned(enemy)
-    enemy.add_hp_bar(x: 0.7, y: 0.7)
-    enemy.collision = [64, 100, 27]
-    enemy.data.var[:speed] = 2
+  def spawned(self_)
+    self_.add_hp_bar(x: 0.7, y: 0.7)
+    self_.collision = [64, 100, 27]
+    self_.data.var[:speed] = 2
   end
-  
-  def lived(enemy)
-    passed_tick = Play.tick - enemy.spawn_tick
 
-    if passed_tick <= 100
-      distance_x = enemy.x - Play.player.x
-      distance_y = enemy.y - Play.player.y
-      enemy.data.direction = Math.atan2(distance_y, distance_x) * 180.0 / Math::PI
-      enemy.data.direction = 360 + enemy.data.direction if enemy.data.direction < 0
-    end
+  def lived(self_)
+    passed_tick = Play.tick - self_.spawn_tick
 
-    enemy.x -= enemy.data.var[:speed] * Math.cos(enemy.data.direction * Math::PI / 180.0)
-    enemy.y -= enemy.data.var[:speed] * Math.sin(enemy.data.direction * Math::PI / 180.0)
+    distance_x = self_.x - Play.player.x
+    distance_y = self_.y - Play.player.y
+    self_.data.direction = Math.atan2(distance_y, distance_x) * 180.0 / Math::PI
+    self_.data.direction = 360 + self_.data.direction if self_.data.direction < 0
 
-    enemy.anime_next if passed_tick % 10 == 0
+    obj = Play.stage.objects
+    self_.x -= dx = self_.data.var[:speed] * Math.cos(self_.data.direction * Math::PI / 180.0)
+    self_.x += dx * 2 unless self_.check(obj).empty?
 
-    bullets = enemy.check(Bullet.list)
+    self_.y -= dy = self_.data.var[:speed] * Math.sin(self_.data.direction * Math::PI / 180.0)
+    self_.y += dy * 2 unless self_.check(obj).empty?
+
+    self_.anime_next if passed_tick % 10 == 0
+
+    bullets = self_.check(Bullet.list)
     unless bullets.empty?
       SE.play(:slime)
-      enemy.calc_hp(bullets[0])
-      Bullet.list.delete(bullets[0]) # TODO: Bullet の削除 : bullet_data に移動
+      self_.calc_hp(bullets[0])
+      # Bullet.list.delete(bullets[0]) # TODO: Bullet の削除 : bullet_data に移動
     end
   end
 
-  def dead(enemy)
-    SE.play(:retro04)
-    # $se_retro04.set_volume(255 * $volume)
-    $score += enemy.data.score
-    Play.player.exp += enemy.data.exp
-    Play.player.level = Play.player.exp / 50 # TODO: レベルのあげ方
-
-    enemy.vanish
+  def dead(self_)
+    if self_.data.var[:count].nil?
+      SE.play(:retro04)
+      # $se_retro04.set_volume(255 * $volume)
+      $score += self_.data.score
+      Play.player.exp += self_.data.exp
+      Play.player.level = Play.player.exp / 50 # TODO: レベルのあげ方
+      self_.collision_enable = false
+      self_.data.var[:count] = 0
+      self_.x += 64
+      self_.y += 100
+      self_.image = Image.new(20, 20, C_WHITE)
+    else
+      self_.data.var[:count] += 1
+      count = self_.data.var[:count]
+      self_.image = Image.new(20 + count, 20 + count, C_WHITE)
+      self_.x -= 0.5
+      self_.y -= 0.5
+      self_.alpha -= 7
+      self_.vanish if self_.alpha <= 7
+    end
   end
 end
 
@@ -76,6 +92,7 @@ class SlimeWind < Slime
   end
 end
 
+# ゴーレム
 class Golem < IEnemyData
   def initialize
     _golem_img = Image.load_tiles("#{$PATH}/assets/image/Golem_stone.png", 6, 4)
@@ -83,33 +100,33 @@ class Golem < IEnemyData
     super('ゴーレム', :dark, 500, 1000, 100, golem_img[0], anime: golem_img)
   end
 
-  def spawned(enemy)
-    enemy.add_hp_bar
+  def spawned(self_)
+    self_.add_hp_bar
   end
 
-  def lived(enemy)
-    passed_tick = Play.tick - enemy.spawn_tick
+  def lived(self_)
+    passed_tick = Play.tick - self_.spawn_tick
 
-    enemy.y += 2
-    enemy.y = -300 if enemy.y > Window.height
+    self_.y += 2
+    self_.y = -300 if self_.y > Window.height
 
-    enemy.anime_next if passed_tick % 10 == 0
+    self_.anime_next if passed_tick % 10 == 0
 
-    bullets = enemy.check(Bullet.list)
+    bullets = self_.check(Bullet.list)
     unless bullets.empty?
       SE.play(:slime)
-      enemy.calc_hp(bullets[0])
-      Bullet.list.delete(bullets[0]) # TODO: Bullet の削除 : bullet_data に移動
+      self_.calc_hp(bullets[0])
+      # Bullet.list.delete(bullets[0]) # TODO: Bullet の削除 : bullet_data に移動
     end
   end
 
   def dead
     SE.play(:retro04)
     # $se_retro04.set_volume(255 * $volume)
-    $score += enemy.data.score
-    Play.player.exp += enemy.data.exp
+    $score += self_.data.score
+    Play.player.exp += self_.data.exp
     Play.player.level = Play.player.exp / 50 # TODO: レベルのあげ方
 
-    enemy.vanish
+    self_.vanish
   end
 end
