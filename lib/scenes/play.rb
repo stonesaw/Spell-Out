@@ -11,6 +11,7 @@ class Play < Scene
     @tick = 0
     @font = Font.new(80, 'Poco')
     @font_mini = Font.new(50, 'Poco')
+    @font_spell = Font.new(90, 'Poco')
 
     _img = Image.load_tiles("#{$PATH}/assets/image/wizard.png", 6, 4)
     load_setting = [4, 3, 0, 1, 2, 7, 6, 5]
@@ -76,7 +77,6 @@ class Play < Scene
       @book_anime_count += 1
     end
     @book.image = @book_anime[@book_anime_count / 3]
-    p @player.spell.to_s
 
     @tick += 1
   end
@@ -129,17 +129,17 @@ class Play < Scene
 
     case @player.spell.to_s
     when "fire"
-      Window.draw_font(60, 820, @player.spell.to_s, @font, color: [255, 0, 0])
-    when "dark"
-      Window.draw_font(60, 820, @player.spell.to_s, @font, color: [121,73,173])
-    when "holy"
-      Window.draw_font(60, 820, @player.spell.to_s, @font, color: C_BLACK)
-    when "wind"
-      Window.draw_font(60, 820, @player.spell.to_s, @font, color: [23,155,123])
+      Window.draw_font(60, 820, @player.spell.to_s, @font_spell, color: [255, 0, 0])
     when "water"
-      Window.draw_font(40, 820, @player.spell.to_s, @font, color: [55,183,130])
-    end
-
+      Window.draw_font(40, 820, @player.spell.to_s, @font_spell, color: [55,183,130])
+    when "wind"
+      Window.draw_font(60, 820, @player.spell.to_s, @font_spell, color: [23,155,123])
+    when "holy"
+      Window.draw_font(60, 820, @player.spell.to_s, @font_spell, color: C_BLACK)
+    when "dark"
+      Window.draw_font(60, 820, @player.spell.to_s, @font_spell, color: [121,73,173])
+    end 
+    
   end
 
   def self.last

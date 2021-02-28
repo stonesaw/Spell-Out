@@ -108,7 +108,6 @@ class Title < Scene
     c = @hit_spell ? @_spell_color[@hit_spell] : C_WHITE
     Window.draw_font(30, -100, 'Spell', @font_title, color: c)
     Window.draw_font(30,  100, 'Out',   @font_title, color: c)
-
     # @section_play.draw
     # @section_credit.draw
     # @section_exit.draw
