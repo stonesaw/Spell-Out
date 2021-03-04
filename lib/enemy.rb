@@ -30,7 +30,7 @@ class Enemy < Sprite
   def update
     # @data.proc_lived.call(self)
     # @data.proc_dead.call(self) if data.hp <= 0
-    if data.hp > 0
+    if @data.hp > 0
       @data.lived(self)
     else
       @data.dead(self)
@@ -41,26 +41,29 @@ class Enemy < Sprite
 
   def calc_hp(bullet)
     boost = if spell_matching?(bullet)
-              1.5
+              2.0
             elsif spell_missing?(bullet)
-              0.3
+              0.5
             else
               1.0
             end
-
-    data.hp = [0, data.hp - bullet.attack * boost].max
+    @data.hp = [0, @data.hp - bullet.attack * boost].max
   end
 
   def spell_matching?(bullet)
     self.class._spell_match.each do |to, from|
-      return (bullet.spell == to && data.spell == from)
+      if bullet.spell == to && @data.spell == from
+        return true
+      end
     end
     false
   end
 
   def spell_missing?(bullet)
     self.class._spell_miss.each do |to, from|
-      return (bullet.spell == to && data.spell == from)
+      if bullet.spell == to && @data.spell == from
+        return true
+      end
     end
     false
   end

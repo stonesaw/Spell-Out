@@ -1,6 +1,6 @@
 class Player < Sprite
   attr_accessor :spell, :max_life, :life, :images, :direction, :level, :exp
-  attr_reader :is_changed_spell
+  attr_reader :is_changed_spell, :speed
 
   def initialize(spell, x, y, images)
     super
@@ -44,10 +44,12 @@ class Player < Sprite
     ox = x + (image.width / 2)
     oy = y + (image.height / 2)
 
-    anime_stop = false
+    # [右 → から時計回り][アニメーション]
+    @anime_count += 1 if Play.tick % 10 == 0
     if (0..10).include?((ox - mx).abs) && (0..10).include?((oy - my).abs)
-      anime_stop = true
+      animation(1)
     else
+      animation(@anime_count)
       angle = Math.atan2(my - oy, mx - ox) * 180.0 / Math::PI
       angle = 360 + angle if angle < 0
       @direction = angle
@@ -65,14 +67,6 @@ class Player < Sprite
     # self.x = (Window.width - self.image.width) / 2
     # self.y = (Window.height - self.image.height) / 2
 
-    # [右 → から時計回り][アニメーション]
-    @anime_count += 1 if Play.tick % 10 == 0
-    frame = if anime_stop
-              1
-            else
-              @anime_count % 3
-            end
-    self.image = @images[((@direction + 23) % 360) / 45][frame]
 
     # hit enemy
     enemies = check(Enemy.list) # unless Enemy.list.empty?
@@ -80,7 +74,7 @@ class Player < Sprite
       @life -= 50
       @hit_tick = Play.tick
       @is_hit = true
-      Enemy.list.delete(enemies[0])
+      Enemy.list.delete(enemies[0]) if enemies[0].data.name != 'ゴーレム'
     end
 
     if @hit_tick != 0 && Play.tick - @hit_tick < 180
@@ -131,6 +125,10 @@ class Player < Sprite
     # ため攻撃のゲージ
     Window.draw(self.x - 20, self.y + 10,
                 @charge_circle_img[(@charge_percent * 8).to_i])
+  end
+
+  def animation(frame)
+    self.image = @images[((@direction + 23) % 360) / 45][frame % 3]
   end
 
   private def _fire_bullet(level: 1)

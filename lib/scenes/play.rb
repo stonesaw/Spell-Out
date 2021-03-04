@@ -11,8 +11,10 @@ class Play < Scene
     @tick = 0
     @font_big = Font.new(100, 'Poco')
     @font = Font.new(80, 'Poco')
+    @font_mid = Font.new(70, 'Poco')
     @font_mini = Font.new(50, 'Poco')
     @font_spell = Font.new(90, 'Poco')
+    @font_clear = Font.new(200, 'Poco')
 
     _img = Image.load_tiles("#{$PATH}/assets/image/wizard.png", 6, 4)
     load_setting = [4, 3, 0, 1, 2, 7, 6, 5]
@@ -25,8 +27,9 @@ class Play < Scene
       (Window.width - player_images[0][0].width) * 0.5, Window.height * 0.7,
       player_images
     )
-    r = @player.image.width / 2
-    Input.set_mouse_pos(@player.x * Window.scale + r, @player.y * Window.scale + r)
+    _x = @player.x + @player.image.width / 2
+    _y = @player.y + @player.image.height / 2
+    Input.set_mouse_pos(_x * Window.scale, _y * Window.scale)
     Bullet.reset
     Enemy.reset
     BulletData.load
@@ -37,35 +40,36 @@ class Play < Scene
     @book = Sprite.new(10, 800, @book_anime[0])
     @book_anime_count = 0
 
-    sleep 1
-  end
-
-  def self.set_music
-    BGM.init
-    SE.init
+    # sleep 1
+    SceneManager.next(:play_cut_in)
   end
 
   def self.update
-    # test
-    # SceneManager.next(:title) if Input.key_push?(K_BACK)
     Input.mouse_enable = true
     $debug_mode = !$debug_mode if Input.key_release?(K_F5)
+    if @tick == 0
+      BGM.init
+      SE.init
+    end
 
     SceneManager.next(:menu) if Input.key_release?(K_TAB)
 
     @stage.update
-    if @stage.is_clear
-      _window_darken
-      SceneManager.next(:stage_select, @stage_name)
-      # SceneManager.next(:game_over, :game_clear, loading: true)
+    if @stage.is_clear || Input.key_down?(K_F12)
+      _stage_clear
+      if @stage_name == '1-6'
+        SceneManager.next(:game_over, :game_clear, loading: true)
+      else
+        SceneManager.next(:stage_select, @stage_name, loading: true)
+      end
     end
 
     # update
     @player.update
 
     if @player.life <= 0
-      _window_darken
-      SceneManager.next(:game_over, nil)
+      _game_over
+      SceneManager.next(:game_over, nil, skip_draw: false)
     end
 
     Bullet.update
@@ -143,33 +147,60 @@ class Play < Scene
     else
       wave = "#{@stage.now + 1} / #{@stage.waves.length}"
     end
+    x = (Window.width - @font_mid.get_width("STAGE : #{@stage_name}")) * 0.5
+    Window.draw_font(x, -15, "STAGE : #{@stage_name}", @font_mid)
     x = (Window.width - @font_big.get_width("WAVE : #{wave}")) * 0.5
-    Window.draw_font(x, -20, "WAVE : #{wave}", @font_big)
+    Window.draw_font(x, 10, "WAVE : #{wave}", @font_big)
     w = @font.get_width(['SCORE : ', $score].join)
     Window.draw_font(Window.width - w - 40, -20, "SCORE : #{$score}", @font)
-    Window.draw_font(
-      Window.width - 200, Window.height - 60,
-      "<FPS : #{Window.real_fps}>", @font_mini,
-      color: [230, 230, 230]
-    )
+    Window.draw_font(230, Window.height - 60, "[TAB] MENU", @font_mini, color: [230, 230, 230])
+    Window.draw_font(Window.width - 200, Window.height - 60,
+                     "<FPS : #{Window.real_fps}>", @font_mini, color: [230, 230, 230])
     # Window.draw_font(Window.width - w - 40, 20, "LEVEL : #{@player.level}", @font)
   end
   private_class_method :_draw_ui
 
-  def self._window_darken
+  def self._stage_clear
+    cover = Sprite.new(0, 0, Image.new(Window.width, Window.height, C_BLACK))
+    cover.alpha = 0
+    @player.alpha = 255
+    i = 0
+    loop do
+      Play.draw
+
+      str = "STAGE CLEAR!"
+      x = (Window.width - @font_clear.get_width(str)) / 2
+      y = (Window.height - @font_clear.size) / 2
+      Window.draw_font(x, y, str, @font_clear)
+      if i > 400
+        cover.alpha += 15 if i % 30 == 0
+        break if cover.alpha > 255
+      end
+
+      cover.draw
+      i += 1
+      Window.update
+    end
+  end
+  private_class_method :_stage_clear
+
+  def self._game_over
     cover = Sprite.new(0, 0, Image.new(Window.width, Window.height, C_BLACK))
     cover.alpha = 0
     @player.alpha = 255
     i = 0
     loop do
       Window.update
-      cover.alpha += 15 if i % 60 == 0
+      Play.draw
+
+      cover.alpha += 15 if i % 30 == 0
       break if cover.alpha > 255
 
-      Play.draw
       cover.draw
       i += 1
     end
+
+    Play.draw
   end
-  private_class_method :_window_darken
+  private_class_method :_game_over
 end

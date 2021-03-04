@@ -49,7 +49,7 @@ class SceneManager
     end
 
     @_set_music = true
-    @_called_next = false
+    @_skip_draw = false
   end
 
   def self.update
@@ -58,22 +58,22 @@ class SceneManager
       @_set_music = false
     end
 
-    @_called_next = false
+    @_skip_draw = false
     @scenes[@now].update
   end
 
   def self.draw
-    @scenes[@now].draw unless @_called_next
+    @scenes[@now].draw unless @_skip_draw
   end
 
-  def self.next(scene_symbol, *args, loading: false, is_init: true)
+  def self.next(scene_symbol, *args, loading: false, is_init: true, skip_draw: true)
     unless @scenes.key?(scene_symbol)
       raise ArgumentError, "SceneManager haven't key '#{scene_symbol}' Arg:scene_symbol"
     end
     raise ArgumentError, "'#{scene_symbol}' is now scene" if scene_symbol == @now
 
     @_set_music = is_init
-    @_called_next = true
+    @_skip_draw = skip_draw
     @scenes[@now].last
     @now = scene_symbol
 

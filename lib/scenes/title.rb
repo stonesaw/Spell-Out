@@ -72,7 +72,11 @@ class Title < Scene
     if Input.mouse_down?(0) || Input.key_down?(K_RETURN)
       if @section_play.on_mouse? || @cursor == 0
         @se_enter_play.play
-        SceneManager.next(:play, '1-1', loading: true)
+        if $stage == 1
+          SceneManager.next(:play, '1-1', loading: true)
+        else
+          SceneManager.next(:stage_select, '1-6', loading: true)
+        end
         return
       elsif @section_credit.on_mouse? || @cursor == 1
         SceneManager.next(:play, '1-1', loading: true)

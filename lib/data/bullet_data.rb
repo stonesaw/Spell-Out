@@ -8,6 +8,14 @@ class IBulletData < ISpriteData
     @is_draw_after = is_draw_after
     @attack = attack
   end
+
+  def spawned(self_)
+    super()
+  end
+
+  def lived(self_)
+    super()
+  end
 end
 
 # ため攻撃のデータ
@@ -28,8 +36,10 @@ class BulletData
   def self.load
     _list_add_level1_bullet
     @list[:level2_fire] = BulletFileLevel2.new
+    @list[:level2_water] = BulletWaterLevel2.new
     @list[:level2_wind] = BulletWindLevel2.new
     @list[:level2_holy] = BulletHolyLevel2.new
+    @list[:level2_dark] = @list[:level1_dark]
   end
 
   def self.spell_and_color
@@ -71,11 +81,12 @@ class BulletLevel1 < IBulletData
       self_.x += dx = self_.data.var[:speed] * Math.cos(self_.direction * Math::PI / 180.0)
       self_.y += dy = self_.data.var[:speed] * Math.sin(self_.direction * Math::PI / 180.0)
 
-      obj, enemies = self_.check(Play.stage.objects), self_.check(Enemy.list)
-      if !obj.empty? || !enemies.empty?
-        if !obj.empty?
+      is_hit_obj = (self_ === Play.stage.objects)
+      is_hit_enemies = (self_ === Enemy.list)
+      if is_hit_obj || is_hit_enemies
+        if is_hit_obj
           self_.collision_enable = false
-        elsif !enemies.empty?
+        elsif is_hit_enemies
           self_.data.var[:next_vanish] = true
         end
         self_.x -= dx * 0.5
@@ -128,7 +139,7 @@ class BulletFileLevel2 < IBulletData
     elsif self_.data.var[:hit_flag] == true
       self_.collision_enable = false
       self_.data.var[:hit_flag] = false
-      self_.data.var[:cool_time] = 50
+      self_.data.var[:cool_time] = 40
     elsif self_.data.var[:hit_flag] == false
       self_.data.var[:cool_time] -= 1
       if self_.data.var[:cool_time] <= 0
@@ -138,6 +149,54 @@ class BulletFileLevel2 < IBulletData
     end
 
     self_.vanish if passed_tick >= 80
+  end
+end
+
+# レベル2 水
+class BulletWaterLevel2 < IBulletData
+  def self.new
+    super(:water, 30, Image.new(32, 64, C_CYAN))
+  end
+
+  def spawned(self_)
+    self_.x = Play.player.x
+    self_.y = Play.player.y
+    self_.angle = Play.player.direction - 90
+    self_.data.var[:speed] = 12
+  end
+
+  def lived(self_)
+    if self_.data.var[:next_vanish]
+      self_.collision_enable = false
+      self_.data.var[:next_vanish] = false
+    end
+
+    if self_.data.var[:vanish_passed].nil?
+      self_.x += dx = self_.data.var[:speed] * Math.cos(self_.direction * Math::PI / 180.0)
+      self_.y += dy = self_.data.var[:speed] * Math.sin(self_.direction * Math::PI / 180.0)
+
+      is_hit_obj = (self_ === Play.stage.objects)
+      is_hit_enemies = (self_ === Enemy.list)
+      if is_hit_obj || is_hit_enemies
+        if is_hit_obj
+          self_.collision_enable = false
+        elsif is_hit_enemies
+          self_.data.var[:next_vanish] = true
+        end
+        self_.x -= dx * 0.5
+        self_.y -= dy * 0.5
+        self_.data.var[:vanish_passed] = 0
+        self_.image = Image.new(20, 20)
+      end
+    else
+      self_.data.var[:vanish_passed] += 1
+      count = self_.data.var[:vanish_passed]
+      self_.image = Image.new(10 + count, 10 + count, C_WHITE)
+      self_.x -= 0.5
+      self_.y -= 0.5
+      self_.alpha -= 15
+      self_.vanish if self_.alpha <= 15
+    end
   end
 end
 
@@ -214,7 +273,7 @@ class BulletHolyLevel2Child < IBulletData
     self_.x += self_.data.var[:speed] * Math.cos(self_.direction * Math::PI / 180.0)
     self_.y += self_.data.var[:speed] * Math.sin(self_.direction * Math::PI / 180.0)
 
-    unless self_.check(Enemy.list).empty?
+    if self_ === Enemy.list
       self_.data.var[:vanish] = true
     end
   end

@@ -16,6 +16,7 @@ Font.install("#{$PATH}/assets/font/misaki_gothic.ttf")
 
 $debug_mode = ARGV.include?('debug') || ARGV.include?('-d')
 $score = 0
+$stage = 1
 
 require_relative 'lib/utils/wrapper'
 require_relative 'lib/utils/scene_manager'
@@ -26,10 +27,8 @@ require_relative 'lib/utils/hp_bar'
 require_relative 'lib/utils/text_box'
 require_relative 'lib/utils/seek_bar'
 require_relative 'lib/player'
-require_relative 'lib/player_setting'
 require_relative 'lib/bullet'
 require_relative 'lib/enemy'
-# require_relative 'lib/enemy_spawn_system'
 require_relative 'lib/stage'
 require_relative 'lib/data/sprite_data'
 require_relative 'lib/data/enemies_data'
@@ -38,6 +37,7 @@ require_relative 'lib/data/stage_data'
 require_relative 'lib/scenes/loading'
 require_relative 'lib/scenes/title'
 require_relative 'lib/scenes/stage_select'
+require_relative 'lib/scenes/play_cut_in'
 require_relative 'lib/scenes/play'
 require_relative 'lib/scenes/menu'
 require_relative 'lib/scenes/game_over'
@@ -48,6 +48,7 @@ Debugger.new(font_size: 48)
 SceneManager.new({
   title: Title,
   stage_select: StageSelect,
+  play_cut_in: PlayCutIn,
   play: Play,
   menu: Menu,
   game_over: GameOver,

@@ -85,18 +85,16 @@ end
 
 class SlimeWind < Slime
   def self.new
-    if @images.nil?
-      @images = Image.load_tiles("#{$PATH}/assets/image/slime2.png", 3, 1)
-    end
+    @images ||= Image.load_tiles("#{$PATH}/assets/image/slime2.png", 3, 1)
     super('風スライム', :wind, @images[0], anime: @images)
   end
 end
 
 # ゴーレム
 class Golem < IEnemyData
-  def initialize
-    _golem_img = Image.load_tiles("#{$PATH}/assets/image/Golem_stone.png", 6, 4)
-    golem_img = [_golem_img[0], _golem_img[1], _golem_img[2]]
+  def self.new
+    @images ||= Image.load_tiles("#{$PATH}/assets/image/Golem_stone.png", 6, 4)
+    golem_img = [@images[0], @images[1], @images[2]]
     super('ゴーレム', :dark, 500, 1000, 100, golem_img[0], anime: golem_img)
   end
 
@@ -108,7 +106,7 @@ class Golem < IEnemyData
     passed_tick = Play.tick - self_.spawn_tick
 
     self_.y += 2
-    self_.y = -300 if self_.y > Window.height
+    self_.y = -200 if self_.y > Window.height
 
     self_.anime_next if passed_tick % 10 == 0
 
@@ -120,7 +118,7 @@ class Golem < IEnemyData
     end
   end
 
-  def dead
+  def dead(self_)
     SE.play(:retro04)
     # $se_retro04.set_volume(255 * $volume)
     $score += self_.data.score

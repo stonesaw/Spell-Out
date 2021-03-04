@@ -2,8 +2,9 @@ class BGM
   @list = {
     # name: [sound, lenth(sec), base_volume]
     chill: [Sound.new("#{$PATH}/assets/sound/32-2.wav"), 78.0, 240],
+    mist: [Sound.new("#{$PATH}/assets/sound/38-5.wav"), 62.1, 240],
   }
-  @play_scene = [:stage_select, :play, :menu, :game_over, :ranking]
+  @play_scene = [:play, :menu, :game_over, :ranking]
   @now = :chill
   @start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
   @blank = 60
@@ -15,6 +16,7 @@ class BGM
   end
 
   def self.init
+    @list[@now][0].stop
     @start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
     @list[@now][0].set_volume(96 + (@list[@now][2] - 96) * @volume)
   end
@@ -33,7 +35,9 @@ class BGM
 
   def self.volume=(volume)
     @volume = volume
-    @list[@now][0].set_volume(96 + (@list[@now][2] - 96) * @volume)
+    @list.each do |k, v|
+      v[0].set_volume(96 + (v[2] - 96) * @volume)
+    end
   end
 end
 
