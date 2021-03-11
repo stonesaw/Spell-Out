@@ -48,3 +48,12 @@ ruby main.rb
 - 開発用に プレイ画面で [F12] を押すと強制的にステージをクリア出来ます
 - プレイ画面で [F5] を押すと デバッグモードが ON になり、デバッグの出力を見れます
 - タイトル画面で [クリック or スペース] でタイトルの色が変わります
+
+## exe化
+```
+gem install ocra
+ocra --windows main.rb assets
+ren main.exe "Spell-Out.exe"
+```
+
+http://mirichi.github.io/dxruby-doc/tips/ocra.html
