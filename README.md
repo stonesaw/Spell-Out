@@ -1,24 +1,8 @@
 # Spell Out
-属性(Spell)の要素を加えたシューティングゲーム  
+属性(Spell)の要素を加えたアクションシューティング  
 属性の相性によってダメージが変わるよ  
+詳しい操作方法などは、[how-to.md](how-to.md) を見てね  
 
-
-## 基本操作
-エスケープキー : ゲームの終了
-
-- プレイ中
-    | キー・マウス | 操作 |
-    | --- | --- |
-    | マウスの移動 | 移動 |
-    | スペース | 攻撃 |
-    | スペース(長押し) | オート攻撃 |
-    | マウスホイール・Z・X | 属性(spell)の変更 |
-    
-- メニュー
-    | キー・マウス | 操作 |
-    | --- | --- |
-    | 矢印キー | 移動 |
-    | エンターキー・マウスクリック | 決定 |
 
 
 ## 使用アセット
@@ -34,7 +18,7 @@
     [jeti様](https://fontmeme.com/jfont/poco-font/)
     
 
-## Useful Links
+## 開発ツール & リンク集
 - vscode ext  
   Project Links (https://marketplace.visualstudio.com/items?itemName=KyleDavidE.vscode-project-links)  
   endwise (https://marketplace.visualstudio.com/items?itemName=kaiwood.endwise)  
