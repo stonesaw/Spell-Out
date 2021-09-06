@@ -1,16 +1,18 @@
-# <img src="./logo.png" width="20%" /> Spell Out
+<img src="./logo.png" width="30%" align="right" />
 
+# Spell Out
 - マウス操作のアクションシューティング
-- ステージ制
-- 5つの属性と属性ごとの攻撃・スキル
+- 5つの属性(🔥💧🌬⚜💀)と属性ごとの攻撃・スキル
 - 属性の相性によってダメージ量が変化
+- 全6 ステージ
 - (みかわし) *todo*  
 詳しい操作方法などは、[how-to.md](how-to.md) を見てね  
 
 
+## GitHub
+https://github.com/stonesaw/Spell-Out
 
 ## 使用アセット
-- 言語 : [Ruby](https://www.ruby-lang.org/ja/)
 - ライブラリ : [DXRuby](http://dxruby.osdn.jp/)
 - 音源  
     [魔王魂様](https://maoudamashii.jokersounds.com/)  
@@ -24,7 +26,6 @@
 
 ## 開発ツール & リンク集
 - vscode ext  
-  Project Links (https://marketplace.visualstudio.com/items?itemName=KyleDavidE.vscode-project-links)  
-  endwise (https://marketplace.visualstudio.com/items?itemName=kaiwood.endwise)  
   Ruby Solargraph (https://marketplace.visualstudio.com/items?itemName=castwide.solargraph)  
+  endwise (https://marketplace.visualstudio.com/items?itemName=kaiwood.endwise)  
 - DXRuby API Reference (http://mirichi.github.io/dxruby-doc/api/index.html)  
